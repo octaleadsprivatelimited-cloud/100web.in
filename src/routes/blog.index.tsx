@@ -26,20 +26,15 @@ function BlogIndex() {
   const posts = Route.useLoaderData() as PublicBlogPost[];
   const featured = posts[0];
   const [query, setQuery] = useState("");
-  const [category, setCategory] = useState("All");
   const [page, setPage] = useState(1);
-  const categories = useMemo(() => ["All", ...Array.from(new Set(posts.map((post) => post.category))).sort()], [posts]);
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return posts.filter((post) =>
-      (category === "All" || post.category === category) &&
       (!needle || `${post.title} ${post.excerpt || ""} ${post.keywords?.join(" ") || ""}`.toLowerCase().includes(needle))
     );
-  }, [posts, query, category]);
+  }, [posts, query]);
   const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const visible = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
-  function chooseCategory(value: string) { setCategory(value); setPage(1); }
 
   return <div className="min-h-screen bg-background text-foreground">
     <SiteHeader />
@@ -78,20 +73,17 @@ function BlogIndex() {
           </Link>}
         </div>
       </section>
-      <section className="sticky top-[4.8rem] z-30 border-b bg-background/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:px-8">
-          <div className="relative min-w-0 flex-1">
+      <section className="border-b bg-background">
+        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+          <div className="relative max-w-xl">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder="Search guides and topics…" className="w-full rounded-xl border bg-background py-2.5 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-brand-orange/30" />
-          </div>
-          <div className="flex gap-2 overflow-x-auto pb-1 lg:max-w-[65%]">
-            {categories.map((item) => <button key={item} onClick={() => chooseCategory(item)} className={`shrink-0 rounded-full px-3 py-2 text-xs font-semibold ${category === item ? "bg-brand-navy text-white" : "border bg-background text-muted-foreground hover:text-brand-navy"}`}>{item}</button>)}
           </div>
         </div>
       </section>
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="mb-6 flex items-center justify-between gap-4">
-          <h2 className="text-2xl font-bold text-brand-navy">{category === "All" ? "Latest articles" : category}</h2>
+          <h2 className="text-2xl font-bold text-brand-navy">Latest articles</h2>
           <span className="text-sm text-muted-foreground">{filtered.length} results</span>
         </div>
         {visible.length ? <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -3,13 +3,18 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { createSession, currentUser, destroySession } from "./auth.server";
 import { pool } from "./db.server";
+import { clearRateLimit, consumeRateLimit } from "./rate-limit.server";
 
 export const login = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => z.object({ email: z.string().email(), password: z.string().min(8) }).parse(input))
   .handler(async ({ data }) => {
+    const rateKey = `login:${data.email.trim().toLowerCase()}`;
+    const attempt = consumeRateLimit(rateKey, 5, 15 * 60 * 1000);
+    if (!attempt.allowed) throw new Error(`Too many sign-in attempts. Try again in ${attempt.retryAfterSeconds} seconds.`);
     const { rows } = await pool.query("SELECT id,email,password_hash,full_name,role,is_active FROM users WHERE lower(email)=lower($1)", [data.email]);
     const user = rows[0];
     if (!user || !user.is_active || !(await bcrypt.compare(data.password, user.password_hash))) throw new Error("Invalid email or password");
+    clearRateLimit(rateKey);
     await createSession(user.id);
     return { id: user.id, email: user.email, full_name: user.full_name, role: user.role };
   });

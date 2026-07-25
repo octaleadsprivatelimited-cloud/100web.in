@@ -17,6 +17,6 @@ https://your-public-domain.com/api/razorpay-webhook
 ```
 
 4. Use the same value from `RAZORPAY_WEBHOOK_SECRET` as the webhook secret.
-5. Enable `payment_link.paid`, `payment.captured`, `payment.authorized`, and `payment.failed`.
+5. Enable `payment_link.paid`, `payment.captured`, `payment.failed`, and `payment.refunded`. Do not use `payment.authorized` to grant project access.
 
 Razorpay cannot deliver production webhooks to a localhost URL. Use a deployed HTTPS domain for live payments. Test mode should be completed before switching to live API keys.

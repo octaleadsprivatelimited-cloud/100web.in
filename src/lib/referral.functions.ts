@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requirePostgresAuth } from "@/integrations/postgres/auth-middleware";
 import { postgres } from "@/lib/db.server";
+import { consumeRateLimit } from "@/lib/rate-limit.server";
 
 async function ensureAdmin(context: { db: any; userId: string }) {
   const { data, error } = await context.db.from("user_roles").select("role").eq("user_id", context.userId);
@@ -21,6 +22,8 @@ const leadSchema = z.object({
 export const submitReferral = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => leadSchema.parse(input))
   .handler(async ({ data }) => {
+    const attempt = consumeRateLimit(`referral:${data.email.toLowerCase()}`, 3, 60 * 60 * 1000);
+    if (!attempt.allowed) throw new Error("Too many referral submissions. Please try again later.");
     const { data: id, error } = await postgres.rpc("submit_referral_lead", {
       _code: data.code, _full_name: data.full_name, _email: data.email,
       _phone: data.phone || null, _company: data.company || null, _message: data.message || null,

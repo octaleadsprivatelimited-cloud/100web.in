@@ -10,6 +10,22 @@ async function requireAdmin(context: { db: any; userId: string }) {
   if (!(data ?? []).some((row: { role: string }) => row.role === "admin")) throw new Error("Forbidden");
 }
 
+function hydrateProject(project: any) {
+  if (!project?.notes) return project;
+  try {
+    const packageData = JSON.parse(project.notes);
+    return packageData?.kind === "customer-project-package" ? { ...project, ...packageData } : project;
+  } catch { return project; }
+}
+
+function withRenewalBalances(renewals: any[], transactions: any[]) {
+  return renewals.map((renewal) => {
+    const paid_minor = transactions.filter((transaction) => transaction.renewal_id === renewal.id && transaction.status === "captured").reduce((sum, transaction) => sum + Number(transaction.amount_minor || 0), 0);
+    const total_minor = Math.max(0, Number(renewal.amount_minor || 0) - Number(renewal.discount_minor || 0) - Number(renewal.referral_discount_minor || 0));
+    return { ...renewal, paid_minor, pending_minor: Math.max(0, total_minor - paid_minor) };
+  });
+}
+
 export const getCustomerPortal = createServerFn({ method: "GET" })
   .middleware([requirePostgresAuth])
   .handler(async ({ context }) => {
@@ -17,15 +33,16 @@ export const getCustomerPortal = createServerFn({ method: "GET" })
     const { data: account, error } = await sb.from("customer_accounts").select("*").eq("user_id", context.userId).maybeSingle();
     if (error) throw new Error(error.message);
     if (!account) return { account: null, projects: [], renewals: [], mailboxes: [] };
-    const [projects, renewals, mailboxes] = await Promise.all([
+    const [projects, renewals, mailboxes, transactions] = await Promise.all([
       sb.from("customer_projects").select("*").eq("customer_id", account.id).order("created_at", { ascending: false }),
       sb.from("customer_renewals").select("*").eq("customer_id", account.id).order("due_at", { ascending: true }),
       sb.from("customer_mailboxes").select("*").eq("customer_id", account.id).order("email_address", { ascending: true }),
+      pool.query("SELECT renewal_id,amount_minor,status FROM payment_transactions WHERE customer_id=$1", [account.id]),
     ]);
     if (projects.error) throw new Error(projects.error.message);
     if (renewals.error) throw new Error(renewals.error.message);
     if (mailboxes.error) throw new Error(mailboxes.error.message);
-    return { account, projects: projects.data ?? [], renewals: renewals.data ?? [], mailboxes: mailboxes.data ?? [] };
+    return { account, projects: (projects.data ?? []).map(hydrateProject), renewals: withRenewalBalances(renewals.data ?? [], transactions.rows), mailboxes: mailboxes.data ?? [] };
   });
 
 const contactSchema = z.object({
@@ -73,7 +90,7 @@ export const adminCustomerOverview = createServerFn({ method: "GET" })
         COALESCE((SELECT jsonb_agg(i ORDER BY i.issued_at DESC) FROM customer_invoices i WHERE i.customer_id=a.id),'[]') AS invoices
       FROM customer_accounts a ORDER BY a.created_at DESC
     `);
-    return rows;
+    return rows.map((row) => ({ ...row, projects: (row.projects ?? []).map(hydrateProject), renewals: withRenewalBalances(row.renewals ?? [], row.transactions ?? []) }));
   });
 
 export const createCustomerAccount = createServerFn({ method: "POST" })
@@ -99,6 +116,59 @@ export const createCustomerAccount = createServerFn({ method: "POST" })
       await client.query("INSERT INTO referral_codes(customer_id,code) VALUES($1,$2)", [account.rows[0].id, accountNumber.replace("CUST-", "")]);
       await client.query("COMMIT");
       return account.rows[0];
+    } catch (error) {
+      await client.query("ROLLBACK");
+      throw error;
+    } finally {
+      client.release();
+    }
+  });
+
+const customerProjectPackageSchema = z.object({
+  customerId: z.string().uuid(),
+  name: z.string().min(2).max(180),
+  serviceTypes: z.array(z.string().min(2).max(100)).min(1).max(8),
+  amount: z.coerce.number().positive().max(10_000_000),
+  dueAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  sourceFilesUrl: z.string().trim().url().or(z.literal("")),
+  agreementTerms: z.string().trim().max(12000).optional(),
+});
+
+export const createCustomerProjectPackage = createServerFn({ method: "POST" })
+  .middleware([requirePostgresAuth])
+  .validator((input: unknown) => customerProjectPackageSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    await requireAdmin(context);
+    const client = await pool.connect();
+    try {
+      await client.query("BEGIN");
+      const account = await client.query("SELECT * FROM customer_accounts WHERE id=$1 FOR UPDATE", [data.customerId]);
+      if (!account.rows[0]) throw new Error("Customer not found");
+      const amountMinor = Math.round(data.amount * 100);
+      const agreementNumber = `AGR-${new Date().getUTCFullYear()}-${crypto.randomUUID().replace(/-/g, "").slice(0, 8).toUpperCase()}`;
+      const terms = data.agreementTerms || "";
+      const serviceType = data.serviceTypes.join(" + ");
+      const packageData = JSON.stringify({ kind: "customer-project-package", services: data.serviceTypes, quoted_amount_minor: amountMinor, currency: "INR", agreement_number: agreementNumber, agreement_terms: terms, source_files_url: data.sourceFilesUrl || null, proposal_sent_at: new Date().toISOString() });
+      const project = await client.query(
+        `INSERT INTO customer_projects(customer_id,name,service_type,status,progress,due_at,notes)
+         VALUES($1,$2,$3,'awaiting_payment',0,$4,$5) RETURNING *`,
+        [data.customerId, data.name, serviceType, data.dueAt, packageData],
+      );
+      const renewal = await client.query(
+        `INSERT INTO customer_renewals(customer_id,project_id,item_name,description,amount_minor,currency,due_at,status)
+         VALUES($1,$2,$3,$4,$5,'INR',$6,'due') RETURNING *`,
+        [data.customerId, project.rows[0].id, `${serviceType}: ${data.name}`, `Project proposal ${agreementNumber}`, amountMinor, data.dueAt],
+      );
+      const customer = account.rows[0];
+      if (customer.billing_email) {
+        await client.query(
+          `INSERT INTO crm_communication_logs(channel,direction,recipient,subject,content,status,created_by)
+           VALUES('email','outbound',$1,$2,$3,'queued',$4)`,
+          [customer.billing_email, `Your ${serviceType} proposal from 100 Web Technologies`, `Your project agreement ${agreementNumber} and payment request are ready in your customer portal.`, context.userId],
+        );
+      }
+      await client.query("COMMIT");
+      return { project: hydrateProject(project.rows[0]), renewal: renewal.rows[0] };
     } catch (error) {
       await client.query("ROLLBACK");
       throw error;

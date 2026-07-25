@@ -2,13 +2,14 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { Building2, CalendarDays, CheckCircle2, Clock3, Copy, CreditCard, Download, ExternalLink, Gift, Loader2, LogOut, Mail, Phone, ReceiptText, Save, ShieldCheck, Sparkles } from "lucide-react";
+import { Building2, CalendarDays, CheckCircle2, Clock3, Copy, CreditCard, Download, ExternalLink, FileText, Gift, Loader2, LogOut, Mail, Phone, ReceiptText, Save, ShieldCheck, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { logout } from "@/lib/auth.functions";
 import { getCustomerPortal, updateCustomerContact } from "@/lib/customer.functions";
 import { getMyReferrals } from "@/lib/referral.functions";
-import { listCustomerPayments } from "@/lib/payments.functions";
+import { listCustomerPayments, syncMyRazorpayPayments } from "@/lib/payments.functions";
 import { downloadInvoicePdf } from "@/lib/invoice-pdf";
+import { downloadAgreementPdf } from "@/lib/agreement-pdf";
 
 export const Route = createFileRoute("/_authenticated/portal")({ component: CustomerPortal });
 
@@ -26,8 +27,13 @@ function CustomerPortal() {
   const load = useServerFn(getCustomerPortal);
   const loadReferrals = useServerFn(getMyReferrals);
   const loadPayments = useServerFn(listCustomerPayments);
+  const syncMyPayments = useServerFn(syncMyRazorpayPayments);
   const saveContact = useServerFn(updateCustomerContact);
-  const { data, isLoading, error } = useQuery<PortalData>({ queryKey: ["customer-portal"], queryFn: () => load() as Promise<PortalData> });
+  const { data, isLoading, error } = useQuery<PortalData>({
+    queryKey: ["customer-portal"],
+    queryFn: async () => { await syncMyPayments(); return load() as Promise<PortalData>; },
+    refetchInterval: 10000,
+  });
   const { data: referrals } = useQuery<any>({ queryKey: ["my-referrals"], queryFn: () => loadReferrals() });
   const { data: payments } = useQuery<any>({ queryKey: ["my-payments"], queryFn: () => loadPayments(), refetchInterval: 15000 });
   const [editing, setEditing] = useState(false);
@@ -123,8 +129,9 @@ function CustomerPortal() {
         <div className="grid gap-6 xl:grid-cols-[1.45fr_1fr]">
           <div className="space-y-6">
             <Panel title="Projects" description="Current progress, timing, and the next milestone.">
-              {data.projects.length ? <div className="divide-y divide-border">{data.projects.map((project) => (
-                <div key={project.id} className="py-5 first:pt-0 last:pb-0">
+              {data.projects.length ? <div className="divide-y divide-border">{data.projects.map((project) => {
+                const projectPayment = data.renewals.find((renewal) => renewal.project_id === project.id && renewal.status !== "paid");
+                return <div key={project.id} className="py-5 first:pt-0 last:pb-0">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div><h3 className="font-semibold text-brand-navy">{project.name}</h3><p className="mt-0.5 text-xs text-muted-foreground">{project.service_type} · {project.project_manager || "Project team"}</p></div>
                     <Status value={project.status} />
@@ -132,8 +139,15 @@ function CustomerPortal() {
                   <div className="mt-4 h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-brand-orange" style={{ width: `${project.progress}%` }} /></div>
                   <div className="mt-2 flex justify-between text-xs text-muted-foreground"><span>{project.progress}% complete</span><span>{project.due_at ? `Due ${formatDate(project.due_at)}` : "Ongoing"}</span></div>
                   {project.next_milestone && <div className="mt-4 flex items-center gap-2 rounded-lg bg-brand-navy/5 px-3 py-2 text-xs text-brand-navy"><Clock3 className="h-4 w-4" /><span className="font-medium">Next:</span> {project.next_milestone}{project.next_milestone_at ? ` · ${formatDate(project.next_milestone_at)}` : ""}</div>}
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <button onClick={() => downloadAgreementPdf(project, account)} className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-xs font-semibold text-brand-navy hover:bg-muted"><FileText className="h-3.5 w-3.5 text-brand-orange" /> Download agreement</button>
+                    {projectPayment?.payment_url && <a href={projectPayment.payment_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-lg bg-brand-orange px-3 py-2 text-xs font-bold text-brand-navy shadow-sm"><CreditCard className="h-3.5 w-3.5" /> Pay balance {money(projectPayment.pending_minor ?? projectPayment.amount_minor, projectPayment.currency)}</a>}
+                    {project.status === "awaiting_payment" && !projectPayment?.payment_url && <button disabled className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-lg bg-muted px-3 py-2 text-xs font-bold text-muted-foreground"><CreditCard className="h-3.5 w-3.5" /> Payment link pending</button>}
+                    {project.status === "active" && project.source_files_url && <a href={project.source_files_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-lg bg-brand-navy px-3 py-2 text-xs font-semibold text-white"><ExternalLink className="h-3.5 w-3.5" /> Open source files</a>}
+                  </div>
+                  {project.status === "awaiting_payment" && <p className="mt-3 text-[11px] text-amber-700">{projectPayment?.payment_url ? "Use the highlighted payment button above to start this project." : "Your secure payment link is being prepared and will appear here shortly."}</p>}
                 </div>
-              ))}</div> : <Empty text="No projects have been linked yet." />}
+              })}</div> : <Empty text="No projects have been linked yet." />}
             </Panel>
 
             <Panel title="Renewals & payments" description="Secure payment links open directly with the configured payment provider.">
@@ -141,8 +155,8 @@ function CustomerPortal() {
                 <div key={renewal.id} className="flex flex-col gap-4 rounded-xl border border-border p-4 sm:flex-row sm:items-center">
                   <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-orange/15 text-brand-navy"><CalendarDays className="h-5 w-5" /></div>
                   <div className="min-w-0 flex-1"><p className="font-semibold text-brand-navy">{renewal.item_name}</p><p className="mt-0.5 text-xs text-muted-foreground">Due {formatDate(renewal.due_at)} · {renewal.description || "Service renewal"}</p></div>
-                  <div className="sm:text-right"><p className="font-semibold text-brand-navy">{money(Math.max(0, renewal.amount_minor - (renewal.discount_minor || 0) - (renewal.referral_discount_minor || 0)), renewal.currency)}</p>{(renewal.discount_minor || renewal.referral_discount_minor) > 0 && <p className="text-[10px] text-emerald-700">Referral savings {money((renewal.discount_minor || 0) + (renewal.referral_discount_minor || 0), renewal.currency)}</p>}<Status value={renewal.status} /></div>
-                  {(renewal.status === "due" || renewal.status === "overdue") && renewal.payment_url && <a href={renewal.payment_url} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-navy px-4 py-2.5 text-xs font-semibold text-white">Pay renewal <ExternalLink className="h-3.5 w-3.5" /></a>}
+                  <div className="sm:text-right"><p className="font-semibold text-brand-navy">Total {money(Math.max(0, renewal.amount_minor - (renewal.discount_minor || 0) - (renewal.referral_discount_minor || 0)), renewal.currency)}</p>{renewal.paid_minor > 0 && <p className="text-[10px] text-emerald-700">Paid {money(renewal.paid_minor, renewal.currency)}</p>}{renewal.pending_minor > 0 && <p className="text-[10px] font-semibold text-amber-700">Pending {money(renewal.pending_minor, renewal.currency)}</p>}<Status value={renewal.status} /></div>
+                  {renewal.status !== "paid" && renewal.payment_url && <a href={renewal.payment_url} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-navy px-4 py-2.5 text-xs font-semibold text-white">Pay balance <ExternalLink className="h-3.5 w-3.5" /></a>}
                 </div>
               ))}</div> : <Empty text="No renewals are scheduled." />}
             </Panel>

@@ -3,8 +3,8 @@ import { Link } from "@tanstack/react-router";
 export function SiteFooter() {
   return (
     <footer className="border-t bg-[var(--brand-navy)] text-white/80">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-4 lg:px-8">
-        <div>
+      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-8 px-4 py-12 sm:px-6 md:grid-cols-4 lg:px-8">
+        <div className="col-span-2 md:col-span-1">
           <div className="flex items-center gap-2">
             <span className="grid h-9 w-9 place-items-center rounded-md bg-[var(--brand-orange)] font-black text-[var(--brand-navy)]">100</span>
             <span className="font-semibold text-white">100 Web Technologies</span>
@@ -14,10 +14,10 @@ export function SiteFooter() {
         <div>
           <div className="text-sm font-semibold text-white">Services</div>
           <ul className="mt-4 space-y-2 text-sm">
-            <li><Link to="/services" className="hover:text-[var(--brand-orange)]">All services</Link></li>
-            <li><Link to="/services/$slug" params={{ slug: "cloud-infrastructure" }} className="hover:text-[var(--brand-orange)]">Cloud Infrastructure</Link></li>
-            <li><Link to="/services/$slug" params={{ slug: "ai-ml" }} className="hover:text-[var(--brand-orange)]">AI & ML</Link></li>
-            <li><Link to="/services/$slug" params={{ slug: "cloud-devops" }} className="hover:text-[var(--brand-orange)]">Cloud DevOps</Link></li>
+            <li><Link to="/services/$slug" params={{ slug: "website-development" }} className="hover:text-[var(--brand-orange)]">Web Development</Link></li>
+            <li><Link to="/services/$slug" params={{ slug: "mobile-app-development" }} className="hover:text-[var(--brand-orange)]">App Development</Link></li>
+            <li><Link to="/services/$slug" params={{ slug: "seo" }} className="hover:text-[var(--brand-orange)]">SEO</Link></li>
+            <li><Link to="/services/$slug" params={{ slug: "digital-marketing" }} className="hover:text-[var(--brand-orange)]">Digital Marketing</Link></li>
           </ul>
         </div>
         <div>
@@ -38,7 +38,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-white/10">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-6 text-xs text-white/60 sm:flex-row sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-row items-center justify-between gap-3 px-4 py-6 text-xs text-white/60 sm:px-6 lg:px-8">
           <p>© {new Date().getFullYear()} 100 Web Technologies. All rights reserved.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-white">Privacy</a>

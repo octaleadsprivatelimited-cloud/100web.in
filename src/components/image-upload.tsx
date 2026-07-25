@@ -9,7 +9,7 @@ export function ImageUpload({ value, onChange, purpose }: { value?: string | nul
   const [busy, setBusy] = useState(false);
   async function choose(file?: File) {
     if (!file) return;
-    if (!file.type.startsWith("image/")) return toast.error("Choose an image file");
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) return toast.error("Choose a JPEG, PNG, or WebP image");
     if (file.size > 12 * 1024 * 1024) return toast.error("Image must be smaller than 12 MB");
     setBusy(true);
     try {
@@ -28,7 +28,7 @@ export function ImageUpload({ value, onChange, purpose }: { value?: string | nul
     <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed bg-muted/20 px-4 py-5 text-xs font-semibold text-brand-navy hover:bg-muted/40">
       {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
       {busy ? "Uploading..." : value ? "Replace image" : "Upload image"}
-      <input disabled={busy} type="file" accept="image/*,.heic,.heif" onChange={(e) => { choose(e.target.files?.[0]); e.currentTarget.value = ""; }} className="sr-only" />
+      <input disabled={busy} type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => { choose(e.target.files?.[0]); e.currentTarget.value = ""; }} className="sr-only" />
     </label>
     <div className="flex items-center gap-2"><span className="h-px flex-1 bg-border" /><span className="text-[10px] uppercase text-muted-foreground">or use a link</span><span className="h-px flex-1 bg-border" /></div>
     <input type="text" value={value || ""} onChange={(e) => onChange(e.target.value)} placeholder="https://example.com/image.jpg" className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-orange/30" />

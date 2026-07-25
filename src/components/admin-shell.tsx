@@ -1,6 +1,7 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { LayoutDashboard, Megaphone, Users, FileText, Building2, Wrench, UserCircle, Menu, X, LogOut, Images, Youtube, Gift, ContactRound } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "@/hooks/use-session";
 import { useServerFn } from "@tanstack/react-start";
 import { logout } from "@/lib/auth.functions";
@@ -29,6 +30,7 @@ const nav: NavItem[] = [
 
 export function AdminShell({ children, title }: { children: React.ReactNode; title: string }) {
   const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const signOutFn = useServerFn(logout);
   const { user } = useSession();
@@ -41,6 +43,18 @@ export function AdminShell({ children, title }: { children: React.ReactNode; tit
 
   const isActive = (to: string, exact?: boolean) =>
     exact ? pathname === to : pathname === to || pathname.startsWith(to + "/");
+
+  useEffect(() => {
+    const refreshActiveData = () => queryClient.invalidateQueries({ refetchType: "active" });
+    const interval = window.setInterval(refreshActiveData, 8_000);
+    window.addEventListener("focus", refreshActiveData);
+    window.addEventListener("online", refreshActiveData);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener("focus", refreshActiveData);
+      window.removeEventListener("online", refreshActiveData);
+    };
+  }, [queryClient]);
 
   return (
     <div className="min-h-screen bg-[hsl(220,14%,97%)]">
@@ -61,6 +75,9 @@ export function AdminShell({ children, title }: { children: React.ReactNode; tit
           <span className="ml-2 hidden text-sm text-muted-foreground sm:block">/ {title}</span>
         </div>
         <div className="flex items-center gap-2">
+          <span className="hidden items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold text-emerald-700 sm:inline-flex">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Live sync
+          </span>
           <span className="hidden max-w-[160px] truncate text-xs text-muted-foreground sm:block">{user?.email}</span>
           <button
             onClick={signOut}

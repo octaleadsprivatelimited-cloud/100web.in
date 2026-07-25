@@ -10,7 +10,9 @@ export async function scheduleRenewalReminders(renewalId: string) {
   const now = new Date();
   let previous = new Date(now.getTime() - 86_400_000);
   for (let index = 0; index < reminderOffsets.length; index += 1) {
-    const scheduled = new Date(`${renewal.due_at}T09:00:00+05:30`);
+    const dueAt = typeof renewal.due_at === "string" && /^\d{4}-\d{2}-\d{2}$/.test(renewal.due_at) ? renewal.due_at : null;
+    const scheduled = dueAt ? new Date(`${dueAt}T09:00:00+05:30`) : new Date(now);
+    if (Number.isNaN(scheduled.getTime())) scheduled.setTime(now.getTime());
     scheduled.setUTCDate(scheduled.getUTCDate() + reminderOffsets[index]);
     const earliest = new Date(previous.getTime() + 86_400_000);
     const normalised = scheduled < earliest ? earliest : scheduled;

@@ -5,8 +5,41 @@ import {
 import { services } from "../lib/services-data";
 import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
+import awsLogo from "../assets/partners/aws.svg";
+import azureLogo from "../assets/partners/azure.svg";
+import googleCloudLogo from "../assets/partners/google-cloud.svg";
+import kubernetesLogo from "../assets/partners/kubernetes.svg";
+import snowflakeLogo from "../assets/partners/snowflake.svg";
+import openaiLogo from "../assets/partners/openai.svg";
+import postgresqlLogo from "../assets/partners/postgresql.svg";
+import mongodbLogo from "../assets/partners/mongodb.svg";
+import laravelLogo from "../assets/partners/laravel.svg";
+import shopifyLogo from "../assets/partners/shopify.svg";
+import wordpressLogo from "../assets/partners/wordpress.svg";
+import reactLogo from "../assets/partners/react.svg";
+import nodejsLogo from "../assets/partners/nodejs.svg";
+import tanstackLogo from "../assets/partners/tanstack.svg";
+import viteLogo from "../assets/partners/vite.svg";
+import pythonLogo from "../assets/partners/python.svg";
+import javascriptLogo from "../assets/partners/javascript.svg";
+import cplusplusLogo from "../assets/partners/cplusplus.svg";
+import sqlLogo from "../assets/partners/sql.svg";
+import javaLogo from "../assets/partners/java.svg";
+import geminiLogo from "../assets/partners/gemini.svg";
+import claudeLogo from "../assets/partners/claude.svg";
+import vercelLogo from "../assets/partners/vercel.svg";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Web Development, Apps, SEO & Digital Marketing in Andhra Pradesh & Telangana | 100 Web Technologies" },
+      { name: "description", content: "100 Web Technologies provides website development, mobile app development, SEO and digital marketing for businesses across Andhra Pradesh and Telangana, including Hyderabad, Vijayawada, Visakhapatnam and Tirupati." },
+      { name: "keywords", content: "web development Andhra Pradesh, website development Telangana, mobile app development Hyderabad, SEO services Andhra Pradesh, digital marketing Telangana, web development Vijayawada, app development Visakhapatnam" },
+      { property: "og:title", content: "Web Development, Apps, SEO & Digital Marketing in Andhra Pradesh & Telangana" },
+      { property: "og:description", content: "Website, app, SEO and digital marketing services for growth-focused businesses across Andhra Pradesh and Telangana." },
+    ],
+    links: [{ rel: "canonical", href: "/" }],
+  }),
   component: Index,
 });
 
@@ -22,9 +55,69 @@ const stats = [
   { k: "99.99%", v: "Platform uptime" },
 ];
 
+const technologyPartners = [
+  { name: "AWS", logo: awsLogo, logoClass: "h-11 w-20" },
+  { name: "Microsoft Azure", logo: azureLogo, logoClass: "h-12 w-24" },
+  { name: "Google Cloud", logo: googleCloudLogo, logoClass: "h-12 w-28" },
+  { name: "Kubernetes", logo: kubernetesLogo, logoClass: "h-12 w-24" },
+  { name: "Snowflake", logo: snowflakeLogo, logoClass: "h-8 w-8", showName: true },
+  { name: "OpenAI", logo: openaiLogo, logoClass: "h-8 w-8", showName: true },
+  { name: "PostgreSQL", logo: postgresqlLogo, logoClass: "h-11 w-24" },
+  { name: "MongoDB", logo: mongodbLogo, logoClass: "h-11 w-24" },
+  { name: "Laravel", logo: laravelLogo, logoClass: "h-10 w-24" },
+  { name: "Shopify", logo: shopifyLogo, logoClass: "h-8 w-8", showName: true },
+  { name: "WordPress", logo: wordpressLogo, logoClass: "h-8 w-8", showName: true },
+  { name: "React JS", logo: reactLogo, logoClass: "h-11 w-24" },
+  { name: "Node.js", logo: nodejsLogo, logoClass: "h-11 w-24" },
+  { name: "TanStack", logo: tanstackLogo, logoClass: "h-8 w-8", showName: true },
+  { name: "Vite", logo: viteLogo, logoClass: "h-8 w-8", showName: true },
+  { name: "Python", logo: pythonLogo, logoClass: "h-11 w-24" },
+  { name: "JavaScript", logo: javascriptLogo, logoClass: "h-8 w-8", showName: true },
+  { name: "C++", logo: cplusplusLogo, logoClass: "h-8 w-8", showName: true },
+  { name: "SQL", logo: sqlLogo, logoClass: "h-11 w-24" },
+  { name: "Java", logo: javaLogo, logoClass: "h-11 w-20" },
+  { name: "Gemini", logo: geminiLogo, logoClass: "h-8 w-8", showName: true },
+  { name: "Claude", logo: claudeLogo, logoClass: "h-8 w-8", showName: true },
+  { name: "Vercel", logo: vercelLogo, logoClass: "h-7 w-7", showName: true },
+];
+
+const homepageServiceOrder = ["website-development", "mobile-app-development", "digital-marketing", "seo"];
+const homepageServices = [...services].sort((first, second) => {
+  const firstPosition = homepageServiceOrder.indexOf(first.slug);
+  const secondPosition = homepageServiceOrder.indexOf(second.slug);
+  return (firstPosition === -1 ? homepageServiceOrder.length : firstPosition) - (secondPosition === -1 ? homepageServiceOrder.length : secondPosition);
+});
+
+const localSeoFaqs = [
+  { question: "What services does 100 Web Technologies provide in Andhra Pradesh and Telangana?", answer: "We provide website development, mobile app development, SEO, digital marketing, e-commerce and custom software services for businesses across Andhra Pradesh and Telangana." },
+  { question: "Do you work with businesses in Hyderabad, Vijayawada and Visakhapatnam?", answer: "Yes. We work remotely and collaboratively with businesses across Hyderabad, Vijayawada, Visakhapatnam, Tirupati, Guntur, Warangal and surrounding cities." },
+  { question: "Can you help a local business improve Google and AI-search visibility?", answer: "Yes. We combine technically sound websites, location-relevant service content, structured data, helpful FAQs, accurate business information and SEO strategy to improve discoverability in traditional and AI-powered search experiences." },
+];
+
 function Index() {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ProfessionalService",
+        name: "100 Web Technologies",
+        url: "https://100web.in",
+        description: "Website development, mobile app development, SEO and digital marketing services for businesses in Andhra Pradesh and Telangana.",
+        areaServed: [
+          { "@type": "State", name: "Andhra Pradesh" },
+          { "@type": "State", name: "Telangana" },
+        ],
+        knowsAbout: ["Website Development", "Mobile App Development", "Search Engine Optimization", "Digital Marketing", "E-commerce Development"],
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: localSeoFaqs.map((faq) => ({ "@type": "Question", name: faq.question, acceptedAnswer: { "@type": "Answer", text: faq.answer } })),
+      },
+    ],
+  };
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
       <SiteHeader />
 
       {/* HERO */}
@@ -99,13 +192,19 @@ function Index() {
       </section>
 
       {/* SOLUTIONS STRIP */}
-      <section id="solutions" className="border-b bg-muted/40">
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <p className="text-sm font-medium text-muted-foreground">Trusted technology partners</p>
-            <div className="flex flex-wrap items-center gap-x-8 gap-y-2 text-sm font-semibold text-foreground/70">
-              <span>AWS</span><span>Microsoft Azure</span><span>Google Cloud</span><span>Kubernetes</span><span>Snowflake</span><span>OpenAI</span>
-            </div>
+      <section id="solutions" className="border-b bg-white">
+        <div className="technology-marquee overflow-hidden border-y border-slate-100 py-3 sm:py-4" aria-label="Technology logos">
+          <div className="technology-marquee-track flex w-max flex-nowrap gap-2.5 sm:gap-3">
+            {[0, 1].map((copy) => (
+              <ul key={copy} className="flex flex-nowrap gap-2.5 sm:gap-3" aria-hidden={copy === 1}>
+                {technologyPartners.map((partner) => (
+                  <li key={`${copy}-${partner.name}`} className="flex h-16 w-32 shrink-0 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 shadow-sm transition hover:border-brand-orange/40 hover:shadow-md sm:h-20 sm:w-40 sm:rounded-xl sm:px-4">
+                    <img src={partner.logo} alt={copy === 0 ? `${partner.name} logo` : ""} className={`${partner.logoClass} max-h-10 max-w-[5.5rem] object-contain sm:max-h-12 sm:max-w-[6.5rem]`} loading="lazy" />
+                    {partner.showName && <span className="whitespace-nowrap text-xs font-bold tracking-tight text-[#263746] sm:text-sm">{partner.name}</span>}
+                  </li>
+                ))}
+              </ul>
+            ))}
           </div>
         </div>
       </section>
@@ -119,7 +218,7 @@ function Index() {
           </p>
         </div>
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {services.map((card) => (
+          {homepageServices.map((card) => (
             <Link
               key={card.slug}
               to="/services/$slug"
@@ -291,6 +390,15 @@ function Index() {
       </section>
 
       {/* CTA */}
+      <section className="border-y bg-slate-50 py-16">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <p className="text-sm font-semibold uppercase tracking-wider text-brand-orange">Andhra Pradesh and Telangana</p>
+          <h2 className="mt-2 text-3xl font-bold tracking-tight text-brand-navy sm:text-4xl">Digital growth support for businesses across both states</h2>
+          <p className="mt-4 max-w-3xl text-base leading-7 text-muted-foreground">From Hyderabad and Warangal to Vijayawada, Visakhapatnam, Tirupati and Guntur, we help businesses build useful digital products and earn visibility with clear service information, reliable websites and search-ready content.</p>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">{localSeoFaqs.map((faq) => <article key={faq.question} className="rounded-xl border bg-white p-5 shadow-sm"><h3 className="text-base font-semibold text-brand-navy">{faq.question}</h3><p className="mt-3 text-sm leading-6 text-muted-foreground">{faq.answer}</p></article>)}</div>
+        </div>
+      </section>
+
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="overflow-hidden rounded-2xl border bg-card p-8 md:p-14" style={{ boxShadow: "var(--shadow-elevated)" }}>
           <div className="grid gap-10 md:grid-cols-2 md:items-center">

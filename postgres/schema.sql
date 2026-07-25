@@ -304,26 +304,6 @@ BEGIN
   INSERT INTO referral_credits(customer_id,referral_lead_id) VALUES(_referrer,_lead_id) ON CONFLICT(referral_lead_id) DO NOTHING;
 END $$;
 
--- Demo accounts requested for local verification. Change these passwords after first login.
-INSERT INTO users(email,password_hash,full_name,role) VALUES
-('admin.demo@yourdomain.com','$2b$12$V/w1W/oW02hIAhoUsdQIn.doro/90qnBWNZ5smbmHcTDPjOEaRppW','Demo Administrator','admin'),
-('customer.demo@yourdomain.com','$2b$12$V/w1W/oW02hIAhoUsdQIn.doro/90qnBWNZ5smbmHcTDPjOEaRppW','Demo Customer','customer')
-ON CONFLICT(email) DO NOTHING;
-INSERT INTO customer_accounts(user_id,account_number,billing_name,billing_email,company)
-SELECT id,'CUST-DEMO100','Demo Customer',email,'Demo Company' FROM users WHERE email='customer.demo@yourdomain.com'
-ON CONFLICT(user_id) DO NOTHING;
-INSERT INTO referral_codes(customer_id,code)
-SELECT id,'DEMO100' FROM customer_accounts WHERE account_number='CUST-DEMO100' ON CONFLICT(customer_id) DO NOTHING;
-INSERT INTO customer_projects(customer_id,name,service_type,status,progress,started_at,due_at,next_milestone,next_milestone_at,project_manager)
-SELECT id,'Corporate Website','Website Development','active',68,current_date-30,current_date+21,'Content approval',current_date+5,'Project Team'
-FROM customer_accounts WHERE account_number='CUST-DEMO100' AND NOT EXISTS(SELECT 1 FROM customer_projects WHERE name='Corporate Website');
-INSERT INTO customer_renewals(customer_id,item_name,description,amount_minor,due_at,status,payment_url)
-SELECT id,'Website hosting renewal','Annual managed hosting',1200000,current_date+30,'upcoming','https://example.com/payment'
-FROM customer_accounts WHERE account_number='CUST-DEMO100' AND NOT EXISTS(SELECT 1 FROM customer_renewals WHERE item_name='Website hosting renewal');
-INSERT INTO customer_mailboxes(customer_id,email_address,display_name,plan_name,renewal_at,recovery_destination_masked,recovery_verified)
-SELECT id,'hello@democompany.com','General Enquiries','Zoho Mail Workplace',current_date+45,'+91 ******3210',true
-FROM customer_accounts WHERE account_number='CUST-DEMO100' ON CONFLICT(customer_id,email_address) DO NOTHING;
-
 -- Repair older installations where UUID primary-key defaults were missing.
 DO $$
 DECLARE target RECORD;

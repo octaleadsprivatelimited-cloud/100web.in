@@ -62,43 +62,43 @@ function ServiceDetail() {
 
       {/* Hero */}
       <section className="border-b bg-[var(--brand-navy)] text-white">
-        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 md:py-20 lg:px-8">
-          <div>
-            <span className="inline-block rounded-md bg-[var(--brand-orange)] px-2.5 py-1 text-xs font-semibold text-[var(--brand-navy)]">
+        <div className="mx-auto grid max-w-7xl items-center gap-6 px-4 py-10 sm:gap-10 sm:px-6 sm:py-16 md:grid-cols-2 md:py-20 lg:px-8">
+          <div className="min-w-0">
+            <span className="inline-block rounded-md bg-[var(--brand-orange)] px-2.5 py-1 text-[11px] font-semibold text-[var(--brand-navy)] sm:text-xs">
               {service.badge}
             </span>
-            <h1 className="mt-5 text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl">
+            <h1 className="mt-4 text-[2rem] font-bold leading-[1.08] tracking-tight sm:mt-5 sm:text-5xl">
               {service.title}
             </h1>
-            <p className="mt-5 max-w-xl text-lg text-white/75">{service.tagline}</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a href="#contact" className="inline-flex items-center gap-2 rounded-full bg-[var(--brand-orange)] px-7 py-3.5 text-sm font-semibold text-[var(--brand-navy)] transition hover:brightness-110">
+            <p className="mt-4 max-w-xl text-base leading-relaxed text-white/75 sm:mt-5 sm:text-lg">{service.tagline}</p>
+            <div className="mt-6 grid gap-2.5 min-[380px]:grid-cols-2 sm:mt-8 sm:flex sm:flex-wrap sm:gap-3">
+              <a href="#contact" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[var(--brand-orange)] px-5 py-3 text-sm font-semibold text-[var(--brand-navy)] transition hover:brightness-110 sm:px-7 sm:py-3.5">
                 Talk to an expert <ArrowRight className="h-4 w-4" />
               </a>
               <button
                 type="button"
                 onClick={() => service.pdf_url ? window.open(service.pdf_url, "_blank", "noopener,noreferrer") : downloadServicePdf(service as Service)}
-                className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/25 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10 sm:px-7 sm:py-3.5"
               >
                 <Download className="h-4 w-4" /> Download PDF
               </button>
             </div>
           </div>
-          <div className="overflow-hidden rounded-2xl border border-white/10">
+          <div className="aspect-[16/10] overflow-hidden rounded-xl border border-white/10 sm:rounded-2xl">
             <img src={service.image} alt={service.title} className="h-full w-full object-cover" width={1024} height={576} />
           </div>
         </div>
       </section>
 
       {/* Overview */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-20 lg:px-8">
-        <div className="grid gap-10 md:grid-cols-3">
+      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 md:py-20 lg:px-8">
+        <div className="grid gap-6 sm:gap-10 md:grid-cols-3">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wider text-[var(--brand-orange)]">Overview</p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Why it matters</h2>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-4xl">Why it matters</h2>
           </div>
           <div className="md:col-span-2">
-            <p className="text-lg text-muted-foreground">{service.overview}</p>
+            <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">{service.overview}</p>
             {service.idealFor?.length ? (
               <div className="mt-6">
                 <p className="text-xs font-semibold uppercase tracking-wider text-[var(--brand-navy)]/60">Ideal for</p>
@@ -118,7 +118,7 @@ function ServiceDetail() {
       {/* Stats */}
       {service.stats?.length ? (
         <section className="border-y bg-[var(--brand-navy)] text-white">
-          <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
+          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-5 gap-y-7 px-4 py-10 sm:gap-8 sm:px-6 sm:py-12 lg:grid-cols-4 lg:px-8">
             {service.stats.map((s) => (
               <div key={s.label}>
                 <div className="text-3xl font-bold text-[var(--brand-orange)] sm:text-4xl">{s.value}</div>
@@ -130,15 +130,15 @@ function ServiceDetail() {
       ) : null}
 
       {/* Benefits */}
-      <section className="bg-muted/40 py-16 md:py-20">
+      <section className="bg-muted/40 py-12 sm:py-16 md:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl">
             <p className="text-sm font-semibold uppercase tracking-wider text-[var(--brand-orange)]">Key benefits</p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">What you get</h2>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-4xl">What you get</h2>
           </div>
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-7 grid gap-4 sm:mt-10 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {service.benefits.map((b) => (
-              <div key={b.title} className="rounded-xl border bg-card p-6" style={{ boxShadow: "var(--shadow-card)" }}>
+              <div key={b.title} className="rounded-xl border bg-card p-5 sm:p-6" style={{ boxShadow: "var(--shadow-card)" }}>
                 <div className="grid h-10 w-10 place-items-center rounded-md bg-[var(--brand-orange)]/15 text-[var(--brand-orange)]">
                   <Check className="h-5 w-5" />
                 </div>
@@ -152,14 +152,14 @@ function ServiceDetail() {
 
       {/* Challenges */}
       {service.challenges?.length ? (
-        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-20 lg:px-8">
+        <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 md:py-20 lg:px-8">
           <div className="max-w-2xl">
             <p className="text-sm font-semibold uppercase tracking-wider text-[var(--brand-orange)]">Challenges we solve</p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Sound familiar?</h2>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-4xl">Sound familiar?</h2>
           </div>
-          <div className="mt-10 grid gap-5 sm:grid-cols-2">
+          <div className="mt-7 grid gap-4 sm:mt-10 sm:gap-5 sm:grid-cols-2">
             {service.challenges.map((c) => (
-              <div key={c.title} className="rounded-xl border bg-card p-6" style={{ boxShadow: "var(--shadow-card)" }}>
+              <div key={c.title} className="rounded-xl border bg-card p-5 sm:p-6" style={{ boxShadow: "var(--shadow-card)" }}>
                 <div className="grid h-10 w-10 place-items-center rounded-md bg-red-500/10 text-red-500">
                   <AlertTriangle className="h-5 w-5" />
                 </div>
@@ -173,15 +173,15 @@ function ServiceDetail() {
 
       {/* Process */}
       {service.process?.length ? (
-        <section className="bg-muted/40 py-16 md:py-20">
+        <section className="bg-muted/40 py-12 sm:py-16 md:py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="max-w-2xl">
               <p className="text-sm font-semibold uppercase tracking-wider text-[var(--brand-orange)]">Our process</p>
-              <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">How we deliver</h2>
+              <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-4xl">How we deliver</h2>
             </div>
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-7 grid gap-4 sm:mt-10 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {service.process.map((p) => (
-                <div key={p.step} className="relative rounded-xl border bg-card p-6" style={{ boxShadow: "var(--shadow-card)" }}>
+                <div key={p.step} className="relative rounded-xl border bg-card p-5 sm:p-6" style={{ boxShadow: "var(--shadow-card)" }}>
                   <div className="text-sm font-bold text-[var(--brand-orange)]">{p.step}</div>
                   <h3 className="mt-2 text-lg font-semibold">{p.title}</h3>
                   <p className="mt-2 text-sm text-muted-foreground">{p.desc}</p>
@@ -193,11 +193,11 @@ function ServiceDetail() {
       ) : null}
 
       {/* Offerings */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-20 lg:px-8">
-        <div className="grid gap-10 md:grid-cols-2 md:items-start">
+      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 md:py-20 lg:px-8">
+        <div className="grid gap-7 sm:gap-10 md:grid-cols-2 md:items-start">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wider text-[var(--brand-orange)]">What we deliver</p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Our {service.badge} services</h2>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-4xl">Our {service.badge} services</h2>
             <p className="mt-4 text-muted-foreground">
               End-to-end delivery from strategy and architecture to build, launch and ongoing support — by senior engineers who own outcomes.
             </p>
@@ -223,7 +223,7 @@ function ServiceDetail() {
           </ul>
         </div>
         {service.techStack?.length ? (
-          <div className="mt-14 rounded-2xl border bg-card p-6 sm:p-8" style={{ boxShadow: "var(--shadow-card)" }}>
+          <div className="mt-10 rounded-xl border bg-card p-5 sm:mt-14 sm:rounded-2xl sm:p-8" style={{ boxShadow: "var(--shadow-card)" }}>
             <p className="text-xs font-semibold uppercase tracking-wider text-[var(--brand-navy)]/60">Technology stack</p>
             <div className="mt-4 flex flex-wrap gap-2">
               {service.techStack.map((t) => (
@@ -238,11 +238,11 @@ function ServiceDetail() {
 
       {/* FAQ */}
       {service.faqs?.length ? (
-        <section className="bg-gradient-to-b from-[var(--brand-orange)]/10 via-white to-white py-16 md:py-20">
+        <section className="bg-gradient-to-b from-[var(--brand-orange)]/10 via-white to-white py-12 sm:py-16 md:py-20">
           <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             <div className="max-w-2xl">
               <p className="text-sm font-semibold uppercase tracking-wider text-[var(--brand-orange)]">FAQ</p>
-              <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Questions we hear a lot</h2>
+              <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-4xl">Questions we hear a lot</h2>
             </div>
             <div className="mt-8">
               <FaqAccordion items={service.faqs} />
@@ -252,10 +252,10 @@ function ServiceDetail() {
       ) : null}
 
       {/* Related */}
-      <section className="bg-muted/40 py-16 md:py-20">
+      <section className="bg-muted/40 py-12 sm:py-16 md:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">Explore other services</h2>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-7 grid gap-4 sm:mt-8 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((r) => (
               <Link
                 key={r.slug}
@@ -270,7 +270,7 @@ function ServiceDetail() {
                   </span>
                   <img src={r.image} alt={r.title} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy" width={1024} height={576} />
                 </div>
-                <div className="p-6">
+                <div className="p-5 sm:p-6">
                   <h3 className="text-lg font-semibold leading-snug">{r.title}</h3>
                   <p className="mt-2 text-sm text-muted-foreground">{r.desc}</p>
                   <div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[var(--brand-navy)] group-hover:text-[var(--brand-orange)]">
@@ -284,11 +284,11 @@ function ServiceDetail() {
       </section>
 
       {/* CTA */}
-      <section id="contact" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-        <div className="overflow-hidden rounded-2xl border bg-card p-8 md:p-14" style={{ boxShadow: "var(--shadow-elevated)" }}>
-          <div className="grid gap-10 md:grid-cols-2 md:items-center">
+      <section id="contact" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-20 lg:px-8">
+        <div className="overflow-hidden rounded-xl border bg-card p-5 sm:rounded-2xl sm:p-8 md:p-14" style={{ boxShadow: "var(--shadow-elevated)" }}>
+          <div className="grid gap-7 sm:gap-10 md:grid-cols-2 md:items-center">
             <div>
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Ready to start with {service.badge}?</h2>
+              <h2 className="text-2xl font-bold tracking-tight sm:text-4xl">Ready to start with {service.badge}?</h2>
               <p className="mt-4 text-muted-foreground">Tell us about your project — a solutions architect will get back within one business day.</p>
               <div className="mt-6 space-y-2 text-sm">
                 <div><span className="text-muted-foreground">Email:</span> <a className="font-medium hover:text-[var(--brand-orange)]" href="mailto:hello@100web.in">hello@100web.in</a></div>

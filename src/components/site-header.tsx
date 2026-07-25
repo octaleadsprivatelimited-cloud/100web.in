@@ -409,23 +409,37 @@ export function SiteHeader() {
           <motion.div
               key="mobile-menu-panel"
               id="mobile-menu"
-              className="absolute left-3 right-3 top-full z-50 mt-2 max-h-[calc(100dvh-6rem)] overflow-y-auto rounded-2xl border border-border bg-background shadow-2xl sm:left-4 sm:right-4 lg:hidden"
-              initial={{ opacity: 0, y: -12, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -12, scale: 0.98 }}
+              className="fixed inset-y-0 right-0 z-[60] flex w-[min(22rem,calc(100vw-1rem))] flex-col overflow-y-auto border-l border-border bg-background shadow-2xl lg:hidden"
+              initial={{ opacity: 0, x: 32 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 32 }}
               transition={{ type: "spring", stiffness: 320, damping: 28, mass: 0.7 }}
             >
-              <div className="flex flex-col gap-1 px-4 py-3">
+              <div className="flex items-center justify-between border-b border-border px-5 py-4">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-orange">100 Web Technologies</p>
+                  <p className="mt-1 text-base font-semibold text-foreground">Explore our site</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="grid h-10 w-10 place-items-center rounded-full border border-border text-foreground transition hover:bg-muted"
+                  aria-label="Close menu"
+                >
+                  <X className="h-5 w-5" aria-hidden="true" />
+                </button>
+              </div>
+              <div className="space-y-1 px-4 py-4">
             {primaryNav.map((n) => {
               if (n.dropdown === "services") {
                 return (
-                  <div key={n.label} className="rounded-lg">
+                  <div key={n.label} className="rounded-xl border border-border bg-muted/30">
                     <button
                       type="button"
                       onClick={() => setMobileServicesOpen((v) => !v)}
                       aria-expanded={mobileServicesOpen}
                       aria-controls="mobile-solutions-panel"
-                      className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-sm font-medium text-foreground hover:bg-muted"
+                      className="flex w-full items-center justify-between rounded-xl px-4 py-3.5 text-sm font-semibold text-foreground hover:bg-muted"
                     >
                       {n.label}
                       <ChevronDown className={`h-4 w-4 transition ${mobileServicesOpen ? "rotate-180" : ""}`} aria-hidden="true" />
@@ -440,13 +454,13 @@ export function SiteHeader() {
                           exit={{ height: 0, opacity: 0 }}
                           transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                         >
-                          <div className="mt-1 space-y-3 pb-2">
+                          <div className="space-y-3 border-t border-border px-3 pb-3 pt-2">
                         {serviceGroups.map((group) => (
                           <div key={group.heading}>
                             <div className="px-3 pb-1 pt-2 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
                               {group.heading}
                             </div>
-                            <ul className="flex flex-col">
+                            <ul className="space-y-1">
                               {group.items.map((s) => {
                                 const Icon = s.icon;
                                 return (
@@ -455,18 +469,17 @@ export function SiteHeader() {
                                       to="/services/$slug"
                                       params={{ slug: s.slug }}
                                       onClick={() => { setOpen(false); setMobileServicesOpen(false); }}
-                                      className="flex items-start gap-3 rounded-lg px-3 py-2.5 hover:bg-muted"
+                                      className="flex items-center gap-3 rounded-lg px-2.5 py-2.5 hover:bg-background"
                                     >
                                       {Icon ? (
-                                        <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-orange/10 text-brand-orange">
+                                        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-brand-orange/10 text-brand-orange">
                                           <Icon className="h-4 w-4" aria-hidden="true" />
                                         </span>
                                       ) : (
                                         <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-orange" aria-hidden="true" />
                                       )}
                                       <span className="min-w-0 flex-1">
-                                        <span className="block text-sm font-semibold text-foreground">{s.badge}</span>
-                                        <span className="mt-0.5 block text-xs text-muted-foreground">{s.blurb ?? s.tagline}</span>
+                                        <span className="block text-xs font-semibold text-foreground">{s.badge}</span>
                                       </span>
                                     </Link>
                                   </li>
@@ -478,7 +491,7 @@ export function SiteHeader() {
                         <Link
                           to="/services"
                           onClick={() => { setOpen(false); setMobileServicesOpen(false); }}
-                          className="mx-3 mt-2 block rounded-lg bg-muted px-4 py-2.5 text-center text-sm font-semibold text-foreground"
+                          className="mt-2 block rounded-lg bg-background px-4 py-2.5 text-center text-sm font-semibold text-foreground"
                         >
                           View all services →
                         </Link>
@@ -492,13 +505,13 @@ export function SiteHeader() {
 
               if (n.dropdown === "industries") {
                 return (
-                  <div key={n.label} className="rounded-lg">
+                  <div key={n.label} className="rounded-xl border border-border bg-muted/30">
                     <button
                       type="button"
                       onClick={() => setMobileIndustriesOpen((v) => !v)}
                       aria-expanded={mobileIndustriesOpen}
                       aria-controls="mobile-industries-panel"
-                      className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-sm font-medium text-foreground hover:bg-muted"
+                      className="flex w-full items-center justify-between rounded-xl px-4 py-3.5 text-sm font-semibold text-foreground hover:bg-muted"
                     >
                       {n.label}
                       <ChevronDown className={`h-4 w-4 transition ${mobileIndustriesOpen ? "rotate-180" : ""}`} aria-hidden="true" />
@@ -513,11 +526,11 @@ export function SiteHeader() {
                           exit={{ height: 0, opacity: 0 }}
                           transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                         >
-                          <div className="mt-1 pb-2">
+                          <div className="border-t border-border px-3 pb-3 pt-2">
                         <div className="px-3 pb-1 pt-2 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
                           Top industries
                         </div>
-                        <ul className="flex flex-col">
+                        <ul className="space-y-1">
                           {topIndustries.map((ind) => {
                             const Icon = industryIcons[ind.slug] ?? Building2;
                             return (
@@ -526,14 +539,13 @@ export function SiteHeader() {
                                   to="/industries/$slug"
                                   params={{ slug: ind.slug }}
                                   onClick={() => { setOpen(false); setMobileIndustriesOpen(false); }}
-                                  className="flex items-start gap-3 rounded-lg px-3 py-2.5 hover:bg-muted"
+                                  className="flex items-center gap-3 rounded-lg px-2.5 py-2.5 hover:bg-background"
                                 >
-                                  <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-orange/10 text-brand-orange">
+                                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-brand-orange/10 text-brand-orange">
                                     <Icon className="h-4 w-4" aria-hidden="true" />
                                   </span>
                                   <span className="min-w-0 flex-1">
-                                    <span className="block text-sm font-semibold text-foreground">{ind.name}</span>
-                                    <span className="mt-0.5 block text-xs text-muted-foreground">{ind.category}</span>
+                                    <span className="block text-xs font-semibold text-foreground">{ind.name}</span>
                                   </span>
                                 </Link>
                               </li>
@@ -543,7 +555,7 @@ export function SiteHeader() {
                         <Link
                           to="/industries"
                           onClick={() => { setOpen(false); setMobileIndustriesOpen(false); }}
-                          className="mx-3 mt-2 block rounded-lg bg-muted px-4 py-2.5 text-center text-sm font-semibold text-foreground"
+                          className="mt-2 block rounded-lg bg-background px-4 py-2.5 text-center text-sm font-semibold text-foreground"
                         >
                           View all industries →
                         </Link>
@@ -560,24 +572,24 @@ export function SiteHeader() {
                   key={n.label}
                   to={n.to}
                   onClick={() => setOpen(false)}
-                  className="flex items-center justify-between rounded-lg px-3 py-3 text-sm font-medium text-foreground hover:bg-muted"
+                  className="flex items-center justify-between rounded-xl px-4 py-3.5 text-sm font-semibold text-foreground transition hover:bg-muted"
                 >
                   {n.label}
                 </Link>
               );
             })}
-            <div className="mt-2 flex flex-col gap-2">
+            <div className="mt-5 grid grid-cols-2 gap-2 border-t border-border pt-4">
               <Link
                 to="/auth"
                 onClick={() => setOpen(false)}
-                className="rounded-full border border-border px-4 py-2 text-center text-sm font-medium text-foreground"
+                className="rounded-xl border border-border px-4 py-3 text-center text-sm font-semibold text-foreground"
               >
                 Sign in
               </Link>
               <Link
                 to="/contact"
                 onClick={() => setOpen(false)}
-                className="rounded-full bg-brand-orange px-4 py-2 text-center text-sm font-semibold text-brand-navy"
+                className="rounded-xl bg-brand-orange px-4 py-3 text-center text-sm font-semibold text-brand-navy"
               >
                 Get started
               </Link>
