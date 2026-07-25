@@ -1,0 +1,46 @@
+import { jsPDF } from "jspdf";
+
+export function downloadInvoicePdf(invoice: any) {
+  const doc = new jsPDF();
+  const billing = invoice.billing_snapshot || {};
+  const money = new Intl.NumberFormat("en-IN", { style: "currency", currency: invoice.currency || "INR" }).format(invoice.amount_minor / 100);
+  doc.setFillColor(0, 20, 55);
+  doc.rect(0, 0, 210, 42, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.text("100 Web Technologies", 18, 20);
+  doc.setFontSize(11);
+  doc.text("PAYMENT INVOICE", 18, 30);
+  doc.setTextColor(20, 30, 45);
+  doc.setFontSize(16);
+  doc.text(invoice.invoice_number, 18, 58);
+  doc.setFontSize(10);
+  doc.text(`Issued: ${new Date(invoice.issued_at).toLocaleString("en-IN")}`, 18, 68);
+  if (invoice.paid_at) doc.text(`Paid: ${new Date(invoice.paid_at).toLocaleString("en-IN")}`, 18, 75);
+  doc.text(`Transaction ID: ${invoice.provider_payment_id || "—"}`, 18, 82);
+  doc.setDrawColor(220, 225, 232);
+  doc.line(18, 92, 192, 92);
+  doc.setFontSize(12);
+  doc.setFont(undefined, "bold");
+  doc.text("Billed to", 18, 105);
+  doc.setFont(undefined, "normal");
+  doc.setFontSize(10);
+  doc.text([billing.name || billing.company || "Customer", billing.email || "", billing.phone || "", billing.account_number || ""].filter(Boolean), 18, 114);
+  doc.setFont(undefined, "bold");
+  doc.text("Description", 18, 150);
+  doc.text("Amount", 160, 150);
+  doc.setFont(undefined, "normal");
+  doc.text(invoice.item_name, 18, 161);
+  if (invoice.description) doc.text(doc.splitTextToSize(invoice.description, 120), 18, 168);
+  doc.text(money, 160, 161);
+  doc.line(18, 190, 192, 190);
+  doc.setFont(undefined, "bold");
+  doc.setFontSize(13);
+  doc.text("Total paid", 120, 204);
+  doc.text(money, 160, 204);
+  doc.setFont(undefined, "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(100, 110, 125);
+  doc.text("This invoice is generated from the verified payment record stored in your customer account.", 18, 278);
+  doc.save(`${invoice.invoice_number}.pdf`);
+}
