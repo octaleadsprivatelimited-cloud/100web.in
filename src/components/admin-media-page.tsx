@@ -22,6 +22,7 @@ type RecordRow = {
   image_url?: string;
   alt_text?: string;
   caption?: string | null;
+  project_url?: string | null;
   is_featured?: boolean;
   youtube_url?: string;
   description?: string | null;
@@ -73,7 +74,7 @@ export function AdminMediaPage({ mode }: { mode: Mode }) {
           </div>
           <h1 className="text-2xl font-semibold text-brand-navy">{gallery ? "Gallery images" : "YouTube videos"}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {gallery ? "Organize website imagery, captions, and featured content." : "Publish and arrange videos shown across the website."}
+            {gallery ? "Add portfolio websites with the category “Website Development” to show them on the public service page." : "Publish and arrange videos shown across the website."}
           </p>
         </div>
         <button
@@ -168,7 +169,7 @@ function MediaForm({ mode, initial, onClose, onSave }: { mode: Mode; initial: Re
   const gallery = mode === "gallery";
   const [data, setData] = useState<RecordRow>(initial ?? {
     title: "", category: "General", sort_order: 0,
-    ...(gallery ? { image_url: "", alt_text: "", caption: "", is_featured: false } : { youtube_url: "", thumbnail_url: "", description: "", is_published: true }),
+    ...(gallery ? { image_url: "", alt_text: "", caption: "", project_url: "", is_featured: false } : { youtube_url: "", thumbnail_url: "", description: "", is_published: true }),
   });
   const [saving, setSaving] = useState(false);
   const update = (name: keyof RecordRow, value: unknown) => setData((current) => ({ ...current, [name]: value }));
@@ -200,6 +201,7 @@ function MediaForm({ mode, initial, onClose, onSave }: { mode: Mode; initial: Re
               <Field label="Gallery image *"><ImageUpload value={data.image_url} onChange={(value) => update("image_url", value)} purpose="gallery" /></Field>
               <Field label="Alternative text *"><input required value={data.alt_text} onChange={(e) => update("alt_text", e.target.value)} placeholder="Describe the image for accessibility" className="admin-input" /></Field>
               <Field label="Caption"><textarea rows={3} value={data.caption ?? ""} onChange={(e) => update("caption", e.target.value)} className="admin-input resize-none" /></Field>
+              <Field label="Live website URL"><input type="url" value={data.project_url ?? ""} onChange={(e) => update("project_url", e.target.value)} placeholder="https://example.com" className="admin-input" /><span className="mt-1 block text-[10px] text-muted-foreground">Use category “Website Development” to show this project on that service page.</span></Field>
               <Toggle checked={Boolean(data.is_featured)} onChange={(v) => update("is_featured", v)} label="Feature this image" />
             </>
           ) : (

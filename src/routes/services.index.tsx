@@ -31,24 +31,22 @@ function ServicesIndex() {
         </div>
       </section>
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-20 lg:px-8">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {services.map((card) => (
             <Link
               key={card.slug}
               to="/services/$slug"
               params={{ slug: card.slug }}
-              className="group block overflow-hidden rounded-2xl border bg-card transition hover:shadow-lg"
-              style={{ boxShadow: "var(--shadow-card)" }}
+              className="group block overflow-hidden rounded-xl bg-[#f3f4f8] transition hover:-translate-y-0.5 hover:shadow-lg"
             >
               <div className="relative aspect-[16/10] overflow-hidden">
-                <span className="absolute left-4 top-4 z-10 rounded-md bg-white/95 px-2.5 py-1 text-xs font-semibold text-[var(--brand-navy)] shadow-sm">{card.badge}</span>
                 <img src={card.image} alt={card.title} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy" width={1024} height={576} />
               </div>
-              <div className="p-6 sm:p-7">
-                <h3 className="text-lg font-semibold leading-snug sm:text-xl">{card.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{card.desc}</p>
+              <div className="p-5 sm:p-6">
+                <h3 className="text-base font-semibold leading-snug">{card.badge}</h3>
+                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{card.desc}</p>
                 <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[var(--brand-navy)] group-hover:text-[var(--brand-orange)]">
-                  Learn more <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4" />
                 </div>
               </div>
             </Link>

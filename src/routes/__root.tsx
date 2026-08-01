@@ -85,6 +85,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "100 Web Technologies — Cloud, AI & Enterprise Solutions" },
       { property: "og:description", content: "Global cloud, AI and enterprise engineering partner." },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "100 Web Technologies" },
+      { name: "robots", content: "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [

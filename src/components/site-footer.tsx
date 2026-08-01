@@ -2,8 +2,10 @@ import { Link } from "@tanstack/react-router";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t bg-[var(--brand-navy)] text-white/80">
-      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-8 px-4 py-12 sm:px-6 md:grid-cols-4 lg:px-8">
+    <footer className="relative isolate overflow-hidden border-t bg-[var(--brand-navy)] text-white/80">
+      <div aria-hidden="true" className="absolute inset-0 z-0 bg-[url('/images/service-backgrounds/aurora-pink.webp')] bg-cover bg-center opacity-70" />
+      <div aria-hidden="true" className="absolute inset-0 z-0 bg-[linear-gradient(110deg,rgba(4,17,40,0.9),rgba(8,22,51,0.66),rgba(4,17,40,0.86))]" />
+      <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-8 px-4 py-12 sm:px-6 md:grid-cols-4 lg:px-8">
         <div className="col-span-2 md:col-span-1">
           <div className="flex items-center gap-2">
             <span className="grid h-9 w-9 place-items-center rounded-md bg-[var(--brand-orange)] font-black text-[var(--brand-navy)]">100</span>
@@ -37,7 +39,7 @@ export function SiteFooter() {
           </ul>
         </div>
       </div>
-      <div className="border-t border-white/10">
+      <div className="relative z-10 border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-row items-center justify-between gap-3 px-4 py-6 text-xs text-white/60 sm:px-6 lg:px-8">
           <p>© {new Date().getFullYear()} 100 Web Technologies. All rights reserved.</p>
           <div className="flex gap-6">

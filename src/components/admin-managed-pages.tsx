@@ -21,6 +21,7 @@ type PageItem = {
   image?: string;
   image_url?: string;
   pdf_url?: string;
+  hero_video_url?: string;
   is_active: boolean;
   [key: string]: unknown;
 };
@@ -107,6 +108,7 @@ function PageEditor({ kind, initial, saving, onClose, onSave }: { kind: Kind; in
             <Field label="Hero tagline"><input value={(item.tagline ?? "") as string} onChange={(e) => set("tagline", e.target.value)} className="managed-input" /></Field>
             <Field label="Page overview"><textarea rows={5} value={(item.overview ?? "") as string} onChange={(e) => set("overview", e.target.value)} className="managed-input" /></Field>
             <Field label="Hero image URL"><input value={(item.image ?? "") as string} onChange={(e) => set("image", e.target.value)} className="managed-input" /></Field>
+            <Field label="YouTube hero video (optional)"><input type="url" value={(item.hero_video_url ?? "") as string} onChange={(e) => set("hero_video_url", e.target.value)} placeholder="https://www.youtube.com/watch?v=..." className="managed-input" /><span className="mt-1 block text-[10px] text-muted-foreground">For Website Development, this replaces the hero image with an embedded video.</span></Field>
           </> : <>
             <Field label="Hero heading (optional)"><input value={(item.hero_title ?? "") as string} onChange={(e) => set("hero_title", e.target.value)} placeholder={`Grow your ${item.name} business online`} className="managed-input" /></Field>
             <Field label="Page description"><textarea rows={5} value={(item.description ?? "") as string} onChange={(e) => set("description", e.target.value)} className="managed-input" /></Field>

@@ -142,8 +142,9 @@ export function SiteHeader() {
   }, [industriesOpen]);
 
   return (
-    <header className="sticky top-3 z-50 px-3 sm:px-4" role="banner">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 rounded-2xl bg-brand-navy px-4 py-2.5 text-white shadow-[0_10px_30px_-10px_rgba(10,31,68,0.35)] ring-1 ring-white/10 sm:px-6">
+    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white" role="banner">
+      <div className="hidden bg-[#232f3e] text-white lg:block"><div className="mx-auto flex h-10 max-w-7xl items-center justify-end gap-7 px-6 text-xs font-semibold lg:px-8"><span className="inline-flex items-center gap-1.5"><Globe className="h-3.5 w-3.5" /> English <ChevronDown className="h-3 w-3" /></span><Link to="/contact" className="hover:text-brand-orange">Contact us</Link><Link to="/services" className="hover:text-brand-orange">Services</Link><Link to="/blog" className="hover:text-brand-orange">Resources</Link><Link to="/auth" className="inline-flex items-center gap-1 hover:text-brand-orange">My account <ChevronDown className="h-3 w-3" /></Link></div></div>
+      <div data-main-header className="mx-auto flex max-w-7xl items-center justify-between gap-4 bg-white px-4 py-4 text-brand-navy sm:px-6 lg:px-8">
         <Link to="/" className="flex shrink-0 items-center" aria-label="100 Web Technologies — Home">
           <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-orange font-black text-brand-navy">100</span>
         </Link>
@@ -367,7 +368,7 @@ export function SiteHeader() {
               className="h-9 w-48 rounded-full border border-white/20 bg-white/10 pl-9 pr-3 text-sm text-white placeholder:text-white/60 focus:border-white/40 focus:outline-none lg:w-56"
             />
           </div>
-          <Link to="/auth" className="text-sm font-medium text-white/80 transition hover:text-white">
+          <Link to="/auth" className="text-sm font-medium text-brand-navy transition hover:text-brand-orange">
             Sign in
           </Link>
           <Link
@@ -379,7 +380,7 @@ export function SiteHeader() {
         </div>
 
         <button
-          className="grid h-10 w-10 place-items-center rounded-full hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 lg:hidden"
+          className="grid h-10 w-10 place-items-center rounded-full text-brand-navy hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy/30 lg:hidden"
           onClick={() => setOpen(!open)}
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
@@ -598,6 +599,7 @@ export function SiteHeader() {
             </motion.div>
         )}
       </AnimatePresence>
+      <style>{`[data-main-header] nav a{color:#172033!important}[data-main-header] nav a:hover{background:#f1f5f9!important;color:#172033!important}[data-main-header] input{border-color:#cbd5e1!important;background:#fff!important;color:#172033!important}[data-main-header] input::placeholder{color:#64748b!important}[data-main-header] .lucide-search{color:#172033!important}`}</style>
     </header>
   );
 }

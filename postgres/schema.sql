@@ -74,6 +74,7 @@ CREATE TABLE IF NOT EXISTS gallery_items (
   caption TEXT, category TEXT NOT NULL DEFAULT 'General', is_featured BOOLEAN NOT NULL DEFAULT false, sort_order INT NOT NULL DEFAULT 0,
   created_by UUID REFERENCES users(id) ON DELETE SET NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+ALTER TABLE gallery_items ADD COLUMN IF NOT EXISTS project_url TEXT;
 CREATE TABLE IF NOT EXISTS youtube_videos (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(), title TEXT NOT NULL, youtube_url TEXT NOT NULL, description TEXT,
   category TEXT NOT NULL DEFAULT 'General', thumbnail_url TEXT, is_published BOOLEAN NOT NULL DEFAULT true, sort_order INT NOT NULL DEFAULT 0,

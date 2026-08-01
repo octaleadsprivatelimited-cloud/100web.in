@@ -121,15 +121,15 @@ function Index() {
       <SiteHeader />
 
       {/* HERO */}
-      <section className="relative overflow-hidden" style={{ background: "#5468FF" }}>
-        <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-14 sm:px-6 md:grid-cols-2 md:py-20 lg:px-8">
+      <section className="relative isolate min-h-[620px] overflow-hidden bg-[#b9caf9] bg-[url('/images/service-backgrounds/aurora-light.webp')] bg-cover bg-center pt-8 sm:min-h-[650px] sm:pt-16">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 pb-48 sm:px-6 md:grid-cols-2 lg:px-8">
           {/* Left: lavender content card */}
-          <div className="hero-float relative z-10 rounded-[2rem] bg-[#DDE2FF] p-8 shadow-[0_30px_60px_-20px_rgba(10,31,68,0.45)] ring-1 ring-white/40 sm:p-10 md:p-12">
+          <div className="hero-float relative z-10 max-w-xl rounded-xl bg-[#f4f2fa]/95 p-8 shadow-[0_30px_60px_-20px_rgba(10,31,68,0.35)] ring-1 ring-white/60 sm:p-10 md:p-11">
             <h1 className="text-4xl font-bold leading-[1.1] tracking-tight text-[#0A1F44] sm:text-5xl lg:text-[3.25rem]">
-              Scale globally with cloud built for enterprise
+              Get the greatest choice of web, mobile and AI capabilities
             </h1>
             <p className="mt-5 max-w-lg text-base text-[#0A1F44]/75 sm:text-lg">
-              Get industry-leading security, reliability and performance for every workload — engineered by 100 Web Technologies.
+              Modernize faster and grow more efficiently with one experienced team for websites, apps, SEO and digital marketing.
             </p>
             <Link
               to="/contact"
@@ -179,12 +179,12 @@ function Index() {
         </div>
 
         {/* Stats strip on hero bottom */}
-        <div className="relative border-t border-white/15">
-          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 py-8 sm:grid-cols-4 sm:px-6 lg:px-8">
+        <div className="absolute inset-x-0 bottom-0 rounded-t-[4rem] bg-white pt-4 sm:rounded-t-[5rem] sm:pt-6">
+          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-6 py-8 sm:grid-cols-4 sm:px-10 lg:px-12">
             {stats.map(s => (
               <div key={s.v}>
-                <div className="text-2xl font-bold text-white sm:text-3xl">{s.k}</div>
-                <div className="mt-1 text-xs text-white/70">{s.v}</div>
+                <div className="text-2xl font-bold text-[#0A1F44] sm:text-3xl">{s.k}</div>
+                <div className="mt-1 text-xs text-slate-600">{s.v}</div>
               </div>
             ))}
           </div>
@@ -217,19 +217,15 @@ function Index() {
             Catch up on the latest launches, solutions, and success stories across cloud, AI, and enterprise engineering.
           </p>
         </div>
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {homepageServices.map((card) => (
             <Link
               key={card.slug}
               to="/services/$slug"
               params={{ slug: card.slug }}
-              className="group block overflow-hidden rounded-2xl border bg-card transition hover:shadow-lg"
-              style={{ boxShadow: "var(--shadow-card)" }}
+              className="group block overflow-hidden rounded-xl bg-[#f3f4f8] transition hover:-translate-y-0.5 hover:shadow-lg"
             >
               <div className="relative aspect-[16/10] overflow-hidden">
-                <span className="absolute left-4 top-4 z-10 rounded-md bg-white/95 px-2.5 py-1 text-xs font-semibold text-[var(--brand-navy)] shadow-sm">
-                  {card.badge}
-                </span>
                 <img
                   src={card.image}
                   alt={card.title}
@@ -239,13 +235,13 @@ function Index() {
                   height={576}
                 />
               </div>
-              <div className="flex flex-col justify-between p-6 sm:p-7">
+              <div className="flex flex-col justify-between p-5 sm:p-6">
                 <div>
-                  <h3 className="text-lg font-semibold leading-snug text-foreground sm:text-xl">{card.title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{card.desc}</p>
+                  <h3 className="text-base font-semibold leading-snug text-foreground">{card.badge}</h3>
+                  <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{card.desc}</p>
                 </div>
                 <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[var(--brand-navy)] group-hover:text-[var(--brand-orange)]">
-                  Learn more <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4" />
                 </div>
               </div>
             </Link>

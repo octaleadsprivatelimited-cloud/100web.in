@@ -1,12 +1,39 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requirePostgresAuth } from "@/integrations/postgres/auth-middleware";
 import { pool } from "./db.server";
+import { consumeRateLimit } from "./rate-limit.server";
 import { z } from "zod";
 
 async function requireCrmAccess(userId: string) {
   const { rows } = await pool.query("SELECT role FROM users WHERE id=$1 AND is_active=true", [userId]);
   if (!["admin", "editor"].includes(rows[0]?.role)) throw new Error("CRM access required");
 }
+
+const websiteLeadSchema = z.object({
+  fullName: z.string().trim().max(160).optional(),
+  email: z.string().trim().email().or(z.literal("")).optional(),
+  company: z.string().trim().max(160).optional(),
+  phone: z.string().regex(/^[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number"),
+  message: z.string().trim().max(5000).optional(),
+  page: z.string().trim().min(1).max(160),
+});
+
+export const submitWebsiteLead = createServerFn({ method: "POST" })
+  .validator((input: unknown) => websiteLeadSchema.parse(input))
+  .handler(async ({ data }) => {
+    const attempt = consumeRateLimit(`website-lead:${data.phone}`, 3, 60 * 60 * 1000);
+    if (!attempt.allowed) throw new Error("Too many requests. Please try again in about an hour.");
+    const source = `Website · ${data.page}`.slice(0, 80);
+    const notes = [
+      `Submitted from: ${data.page}`,
+      data.message ? `Project details: ${data.message}` : null,
+    ].filter(Boolean).join("\n");
+    const result = await pool.query(
+      "INSERT INTO crm_leads(full_name,email,phone,company,stage,source,value_minor,currency,tags,notes) VALUES($1,$2,$3,$4,'new',$5,0,'INR',$6,$7) RETURNING id",
+      [data.fullName || "Website visitor", data.email || null, `+91${data.phone}`, data.company || null, source, ["website-enquiry", data.page], notes],
+    );
+    return { id: result.rows[0].id };
+  });
 
 export const getCrmWorkspace = createServerFn({ method: "GET" })
   .middleware([requirePostgresAuth])

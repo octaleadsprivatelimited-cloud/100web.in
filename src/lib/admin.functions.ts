@@ -374,6 +374,7 @@ const galleryItemSchema = z.object({
   alt_text: z.string().min(1).max(300),
   category: z.string().min(1).max(80),
   caption: z.string().max(1000).nullish(),
+  project_url: z.string().url().max(1000).nullish(),
   is_featured: z.boolean().default(false),
   sort_order: z.number().int().default(0),
 });

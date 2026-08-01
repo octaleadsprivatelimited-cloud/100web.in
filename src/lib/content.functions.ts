@@ -3,13 +3,23 @@ import { pool } from "./db.server";
 import { services, type Service } from "./services-data";
 import { industries, type Industry } from "./industries-data";
 
-export type ManagedService = Service & { pdf_url?: string | null; is_active?: boolean };
+export type ManagedService = Service & { pdf_url?: string | null; is_active?: boolean; hero_video_url?: string | null };
 export type ManagedIndustry = Industry & {
   description?: string;
   hero_title?: string;
   image_url?: string;
   pdf_url?: string | null;
   is_active?: boolean;
+};
+
+export type WebsitePortfolioItem = {
+  id: string;
+  title: string;
+  image_url: string;
+  alt_text: string;
+  caption: string | null;
+  project_url: string | null;
+  is_featured: boolean;
 };
 
 async function overrides(table: "service_pages" | "industry_pages") {
@@ -37,6 +47,22 @@ export const getPublicService = createServerFn({ method: "GET" })
     const all = await listPublicServices();
     return (all as ManagedService[]).find((item) => item.slug === data.slug) ?? null;
   });
+
+export const listWebsitePortfolio = createServerFn({ method: "GET" }).handler(async () => {
+  try {
+    const { rows } = await pool.query<WebsitePortfolioItem>(
+      `SELECT id, title, image_url, alt_text, caption, project_url, is_featured
+       FROM gallery_items
+       WHERE lower(category) IN ('website development', 'website portfolio')
+       ORDER BY is_featured DESC, sort_order ASC, created_at DESC
+       LIMIT 12`,
+    );
+    return rows;
+  } catch {
+    // Keeps the public service page online until the optional portfolio fields are migrated.
+    return [] as WebsitePortfolioItem[];
+  }
+});
 
 export const listPublicIndustries = createServerFn({ method: "GET" }).handler(async () => {
   const rows = await overrides("industry_pages");

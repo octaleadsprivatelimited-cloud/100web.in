@@ -110,28 +110,28 @@ function IndustryDetail() {
       <SiteHeader />
 
       {/* Hero */}
-      <section className="bg-brand-navy text-white">
-        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 md:py-20 lg:px-8">
-          <div className="min-w-0">
+      <section className="relative isolate overflow-hidden border-b border-slate-200 bg-[#b9caf9] bg-[url('/images/service-backgrounds/aurora-light.webp')] bg-cover bg-center py-8 sm:py-12">
+        <div className="mx-auto grid max-w-7xl items-center gap-7 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+          <div className="min-w-0 rounded-xl bg-[#f4f2fa]/95 p-6 shadow-[0_30px_60px_-20px_rgba(10,31,68,0.35)] ring-1 ring-white/60 sm:p-10">
             <p className="text-xs font-semibold uppercase tracking-widest text-brand-orange">{industry.category}</p>
-            <h1 className="mt-3 text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl">
+            <h1 className="mt-3 text-4xl font-bold leading-[1.1] tracking-tight text-brand-navy sm:text-5xl">
               {industry.hero_title || <>Grow your <span className="text-brand-orange">{industry.name}</span> business online.</>}
             </h1>
-            <p className="mt-5 max-w-xl text-lg text-white/75">{buildTagline(industry.name)}</p>
+            <p className="mt-5 max-w-xl text-lg text-brand-navy/75">{buildTagline(industry.name)}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a href="#contact" className="inline-flex items-center gap-2 rounded-full bg-brand-orange px-7 py-3.5 text-sm font-semibold text-brand-navy transition hover:brightness-110">
                 Get a free proposal <ArrowRight className="h-4 w-4" />
               </a>
-              <a href="#results" className="inline-flex items-center gap-2 rounded-full border border-white/25 px-7 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10">
+              <a href="#results" className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white/70 px-7 py-3.5 text-sm font-semibold text-brand-navy transition hover:bg-white">
                 See the results
               </a>
-              {industry.pdf_url && <a href={industry.pdf_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-white/25 px-7 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10"><Download className="h-4 w-4" /> Download PDF</a>}
+              {industry.pdf_url && <a href={industry.pdf_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white/70 px-7 py-3.5 text-sm font-semibold text-brand-navy transition hover:bg-white"><Download className="h-4 w-4" /> Download PDF</a>}
             </div>
           </div>
 
           {/* Video placeholder */}
-          <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/[0.03]">
-            {industry.image_url && <img src={industry.image_url} alt={industry.name} className="absolute inset-0 h-full w-full object-cover opacity-70" />}
+          <div className="relative aspect-video overflow-hidden rounded-xl border border-white/60 bg-white shadow-[0_24px_60px_rgba(10,31,68,0.22)]">
+            {industry.image_url && <img src={industry.image_url} alt={industry.name} className="absolute inset-0 h-full w-full object-cover" />}
             <div className="absolute inset-0 grid place-items-center">
               <button
                 type="button"
