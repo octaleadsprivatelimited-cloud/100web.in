@@ -104,6 +104,8 @@ export const syncRazorpayPaymentLink = createServerFn({ method: "POST" })
       await client.query("BEGIN");
       for (const payment of result.payments || []) {
         if (payment.status !== "captured") continue;
+        if (payment.currency && payment.currency !== renewal.currency) continue;
+        if (!Number.isInteger(payment.amount) || payment.amount <= 0) continue;
         await client.query(
           `INSERT INTO payment_transactions(customer_id,renewal_id,provider_payment_id,provider_payment_link_id,amount_minor,currency,status,method,email,contact,paid_at,raw_payload)
            VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) ON CONFLICT(provider_payment_id) DO UPDATE SET status=EXCLUDED.status,method=EXCLUDED.method,paid_at=EXCLUDED.paid_at,raw_payload=EXCLUDED.raw_payload,updated_at=now()`,
@@ -145,6 +147,8 @@ export const syncMyRazorpayPayments = createServerFn({ method: "POST" })
         await client.query("BEGIN");
         for (const payment of link.payments || []) {
           if (payment.status !== "captured") continue;
+          if (payment.currency && payment.currency !== renewal.currency) continue;
+          if (!Number.isInteger(payment.amount) || payment.amount <= 0) continue;
           await client.query(
             `INSERT INTO payment_transactions(customer_id,renewal_id,provider_payment_id,provider_payment_link_id,amount_minor,currency,status,method,email,contact,paid_at,raw_payload)
              VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) ON CONFLICT(provider_payment_id) DO UPDATE SET status=EXCLUDED.status,method=EXCLUDED.method,paid_at=EXCLUDED.paid_at,raw_payload=EXCLUDED.raw_payload,updated_at=now()`,

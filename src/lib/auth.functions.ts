@@ -6,7 +6,7 @@ import { pool } from "./db.server";
 import { clearRateLimit, consumeRateLimit } from "./rate-limit.server";
 
 export const login = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => z.object({ email: z.string().email(), password: z.string().min(8) }).parse(input))
+  .validator((input: unknown) => z.object({ email: z.string().email(), password: z.string().min(8) }).parse(input))
   .handler(async ({ data }) => {
     const rateKey = `login:${data.email.trim().toLowerCase()}`;
     const attempt = consumeRateLimit(rateKey, 5, 15 * 60 * 1000);
@@ -23,7 +23,7 @@ export const logout = createServerFn({ method: "POST" }).handler(async () => { a
 export const getSessionUser = createServerFn({ method: "GET" }).handler(async () => currentUser());
 
 export const acceptInvite = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => z.object({ token: z.string().uuid(), email: z.string().email(), password: z.string().min(8), full_name: z.string().min(2) }).parse(input))
+  .validator((input: unknown) => z.object({ token: z.string().uuid(), email: z.string().email(), password: z.string().min(8), full_name: z.string().min(2) }).parse(input))
   .handler(async ({ data }) => {
     const client = await pool.connect();
     try {

@@ -4,6 +4,8 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { getPublishedBlogPost, type PublicBlogPost } from "@/lib/blog.functions";
 
+const SITE_ORIGIN = "https://100web.in";
+
 export const Route = createFileRoute("/blog/$slug")({
   loader: async ({ params }) => {
     const result = await getPublishedBlogPost({ data: { slug: params.slug } });
@@ -23,10 +25,10 @@ export const Route = createFileRoute("/blog/$slug")({
         { property: "og:title", content: post.title },
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
-        { property: "og:image", content: post.cover_image || `/api/blog-cover/${post.slug}` },
+        { property: "og:image", content: post.cover_image || `${SITE_ORIGIN}/api/blog-cover/${post.slug}` },
         { name: "twitter:card", content: "summary_large_image" },
       ],
-      links: [{ rel: "canonical", href: `/blog/${post.slug}` }],
+      links: [{ rel: "canonical", href: `${SITE_ORIGIN}/blog/${post.slug}` }],
     };
   },
   component: BlogArticle,
@@ -44,17 +46,17 @@ function BlogArticle() {
     dateModified: post.updated_at,
     author: { "@type": "Organization", name: "100 Web Technologies" },
     publisher: { "@type": "Organization", name: "100 Web Technologies" },
-    mainEntityOfPage: `/blog/${post.slug}`,
+    mainEntityOfPage: `${SITE_ORIGIN}/blog/${post.slug}`,
     keywords: post.keywords,
-    image: post.cover_image || `/api/blog-cover/${post.slug}`,
+    image: post.cover_image || `${SITE_ORIGIN}/api/blog-cover/${post.slug}`,
   };
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "/" },
-      { "@type": "ListItem", position: 2, name: "Blog", item: "/blog" },
-      { "@type": "ListItem", position: 3, name: post.title, item: `/blog/${post.slug}` },
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_ORIGIN },
+      { "@type": "ListItem", position: 2, name: "Blog", item: `${SITE_ORIGIN}/blog` },
+      { "@type": "ListItem", position: 3, name: post.title, item: `${SITE_ORIGIN}/blog/${post.slug}` },
     ],
   };
   return <div className="min-h-screen bg-background text-foreground">

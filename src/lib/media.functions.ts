@@ -6,7 +6,8 @@ import { z } from "zod";
 const uploadSchema = z.object({
   filename: z.string().min(1).max(255),
   mimeType: z.enum(["image/jpeg", "image/png", "image/webp"]),
-  base64: z.string().min(1),
+  // 12 MB decoded image data is at most ~16 MB base64. Cap before Buffer.from to prevent memory abuse.
+  base64: z.string().min(1).max(16 * 1024 * 1024),
   purpose: z.enum(["banner", "team", "gallery", "blog", "general"]),
 });
 

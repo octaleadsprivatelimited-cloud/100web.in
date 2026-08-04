@@ -514,10 +514,10 @@ const fmt = (n: number) => n.toLocaleString("en-IN");
 export const buildStats = (name: string) => {
   const h = hash(name);
   const impressions = 400_000 + (h % 800_000);
-  const reach = 180_000 + ((h >> 3) % 400_000);
-  const leads = 400 + ((h >> 5) % 900);
-  const calls = 120 + ((h >> 7) % 350);
-  const conversions = 250 + ((h >> 9) % 500);
+  const reach = 180_000 + ((h >>> 3) % 400_000);
+  const leads = 400 + ((h >>> 5) % 900);
+  const calls = 120 + ((h >>> 7) % 350);
+  const conversions = 250 + ((h >>> 9) % 500);
   return [
     { metric: fmt(impressions), label: "Ad Impressions" },
     { metric: fmt(reach), label: "People Reached" },

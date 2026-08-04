@@ -129,6 +129,22 @@ const angles = [
   ["an enterprise transformation guide", "coordinate architecture, governance, procurement, security and adoption across multiple business units"],
   ["future-proofing decisions for the next three years", "favor adaptable interfaces, portable data, observable operations and reversible choices"],
   ["questions to answer before starting", "align stakeholders on users, outcomes, constraints, ownership, risk and the definition of done"],
+  ["a buyer's guide for Andhra Pradesh and Telangana businesses", "match local growth goals, operating constraints and service expectations to a practical delivery plan"],
+  ["how to turn a service website into a qualified lead engine", "combine a clear offer, fast experience, useful proof and measurable conversion paths"],
+  ["a founder's launch checklist", "launch a reliable first version with the right commercial, technical and customer-support foundations"],
+  ["how to improve conversion from mobile visitors", "remove mobile friction in discovery, forms, trust signals and follow-up workflows"],
+  ["a comparison of implementation approaches", "choose an approach based on outcome risk, internal capability, time-to-value and ownership"],
+  ["a practical guide to reducing customer effort", "identify journey friction and use service design, automation and clear content to eliminate it"],
+  ["what to include in an annual technology plan", "prioritize investment, dependencies, resilience, people and measurable business outcomes"],
+  ["a release-readiness checklist", "verify security, performance, accessibility, measurement and recovery before wider customer exposure"],
+  ["how to align technology and marketing teams", "create shared customer signals, operating rhythms and accountable experiments"],
+  ["a guide to choosing an implementation partner", "evaluate evidence, communication, security, delivery discipline and long-term support"],
+  ["how to improve trust in digital customer journeys", "make privacy, reliability, helpful content and responsive support visible at the moments that matter"],
+  ["a decision guide for first-time buyers", "turn unclear requirements into a scoped, evidence-based and commercially realistic first project"],
+  ["how to plan for continuous improvement", "use customer feedback, operational data and short delivery cycles to improve without disruptive rewrites"],
+  ["a field guide to customer onboarding", "design a faster, clearer path from first interaction to confident and successful use"],
+  ["how to build a credible digital roadmap", "sequence work around customer value, dependencies, risk reduction and available capacity"],
+  ["the measurement plan every leadership team needs", "connect activity, product health, customer outcomes and commercial results in one decision system"],
 ];
 
 function slugify(value) {

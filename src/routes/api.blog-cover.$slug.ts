@@ -29,7 +29,14 @@ function workScene(seed: number, accent: string, secondary: string, detail: stri
   const personTwoX = flip ? 1010 : 770;
   const hair = seed % 3 === 0 ? "#1d2939" : seed % 3 === 1 ? "#55342f" : "#20262f";
   const skin = seed % 3 === 0 ? "#a96345" : seed % 3 === 1 ? "#d98d68" : "#8b513d";
+  const motif = [
+    `<g opacity=".24" fill="none" stroke="${accent}" stroke-width="2"><circle cx="205" cy="150" r="72"/><circle cx="205" cy="150" r="114"/><path d="M91 150h228M205 36v228"/></g>`,
+    `<g opacity=".22" fill="${secondary}"><path d="M88 96h210l-42 58H130Z"/><path d="M168 318h185l-48 70H120Z"/><circle cx="330" cy="116" r="25"/></g>`,
+    `<g opacity=".2" fill="none" stroke="${accent}" stroke-width="4"><path d="M86 126c78-80 160 70 240-16s156 39 235-36"/><path d="M72 334c93-61 173 80 272-7s171 26 272-38"/></g>`,
+    `<g opacity=".2" fill="${secondary}"><rect x="84" y="88" width="128" height="128" rx="30" transform="rotate(16 148 152)"/><rect x="252" y="330" width="160" height="54" rx="27" transform="rotate(-12 332 357)"/></g>`,
+  ][seed % 4];
   return `<g>
+    ${motif}
     <ellipse cx="900" cy="570" rx="285" ry="34" fill="#071827" opacity=".2"/>
     <path d="M640 515h500l-30 48H670Z" fill="#f5f7fb" opacity=".94"/>
     <path d="M694 562h373l-28 43H722Z" fill="#b9c7d8" opacity=".62"/>

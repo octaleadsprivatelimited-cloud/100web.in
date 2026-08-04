@@ -149,21 +149,21 @@ function ServiceDetail() {
               </button>
             </div>
             {isMobileAppService ? (
-              <div className="mt-6 grid max-w-xl grid-cols-3 gap-2 border-t border-white/15 pt-5 sm:mt-8 sm:gap-4">
+              <div className="mt-6 grid max-w-xl grid-cols-3 gap-2 border-t border-slate-300 pt-5 sm:mt-8 sm:gap-4">
                 <div className="min-w-0">
-                  <Smartphone className="h-4 w-4 text-orange-300" />
-                  <p className="mt-2 text-xs font-semibold text-white sm:text-sm">iOS + Android</p>
-                  <p className="mt-1 text-[11px] leading-snug text-white/60 sm:text-xs">One product experience</p>
+                  <Smartphone className="h-4 w-4 text-[var(--brand-orange)]" />
+                  <p className="mt-2 text-xs font-semibold text-[#0A1F44] sm:text-sm">iOS + Android</p>
+                  <p className="mt-1 text-[11px] leading-snug text-slate-600 sm:text-xs">One product experience</p>
                 </div>
-                <div className="min-w-0 border-l border-white/15 pl-3 sm:pl-4">
-                  <CalendarCheck className="h-4 w-4 text-orange-300" />
-                  <p className="mt-2 text-xs font-semibold text-white sm:text-sm">Clear delivery plan</p>
-                  <p className="mt-1 text-[11px] leading-snug text-white/60 sm:text-xs">Milestones you can follow</p>
+                <div className="min-w-0 border-l border-slate-300 pl-3 sm:pl-4">
+                  <CalendarCheck className="h-4 w-4 text-[var(--brand-orange)]" />
+                  <p className="mt-2 text-xs font-semibold text-[#0A1F44] sm:text-sm">Clear delivery plan</p>
+                  <p className="mt-1 text-[11px] leading-snug text-slate-600 sm:text-xs">Milestones you can follow</p>
                 </div>
-                <div className="min-w-0 border-l border-white/15 pl-3 sm:pl-4">
-                  <ShieldCheck className="h-4 w-4 text-orange-300" />
-                  <p className="mt-2 text-xs font-semibold text-white sm:text-sm">Built to scale</p>
-                  <p className="mt-1 text-[11px] leading-snug text-white/60 sm:text-xs">Secure, maintainable code</p>
+                <div className="min-w-0 border-l border-slate-300 pl-3 sm:pl-4">
+                  <ShieldCheck className="h-4 w-4 text-[var(--brand-orange)]" />
+                  <p className="mt-2 text-xs font-semibold text-[#0A1F44] sm:text-sm">Built to scale</p>
+                  <p className="mt-1 text-[11px] leading-snug text-slate-600 sm:text-xs">Secure, maintainable code</p>
                 </div>
               </div>
             ) : null}

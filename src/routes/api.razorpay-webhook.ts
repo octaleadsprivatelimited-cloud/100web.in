@@ -7,13 +7,17 @@ export const Route = createFileRoute("/api/razorpay-webhook")({
   POST: async ({ request }) => {
     const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
     if (!secret) return new Response("Webhook is not configured", { status: 503 });
+    const contentLength = Number(request.headers.get("content-length") || 0);
+    if (!Number.isFinite(contentLength) || contentLength > 1_000_000) return new Response("Payload too large", { status: 413 });
     const raw = await request.text();
+    if (raw.length > 1_000_000) return new Response("Payload too large", { status: 413 });
     const received = request.headers.get("x-razorpay-signature") || "";
     const expected = createHmac("sha256", secret).update(raw).digest("hex");
     const valid = received.length === expected.length && timingSafeEqual(Buffer.from(received), Buffer.from(expected));
     if (!valid) return new Response("Invalid signature", { status: 401 });
     const eventId = request.headers.get("x-razorpay-event-id");
-    const body = JSON.parse(raw);
+    let body: any;
+    try { body = JSON.parse(raw); } catch { return new Response("Invalid JSON", { status: 400 }); }
     const payment = body?.payload?.payment?.entity;
     const link = body?.payload?.payment_link?.entity;
     if (!payment) return Response.json({ ok: true });

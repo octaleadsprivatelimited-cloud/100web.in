@@ -1,9 +1,11 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useState, useRef, useEffect } from "react";
-import { Menu, X, Search, ChevronDown, Globe, Smartphone, Users, Building2, Stethoscope, GraduationCap, Car, Utensils, Dumbbell, Scissors, ShoppingCart, Pill, Hotel, type LucideIcon } from "lucide-react";
+import { Menu, X, Search, ChevronDown, Globe, Smartphone, Users, Building2, Stethoscope, GraduationCap, Car, Utensils, Dumbbell, Scissors, ShoppingCart, Pill, Hotel, Home, BriefcaseBusiness, Phone, type LucideIcon } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { services } from "../lib/services-data";
 import { industries } from "../lib/industries-data";
+import { MobileNavigationDock } from "./mobile-navigation-dock";
+import whatsappLogo from "../assets/whatsapp.svg";
 
 const bySlug = (slug: string) => services.find((s) => s.slug === slug)!;
 type GroupItem = ReturnType<typeof bySlug> & { icon?: LucideIcon; blurb?: string };
@@ -71,6 +73,8 @@ const primaryNav = [
 ];
 
 export function SiteHeader() {
+  const navigate = useNavigate();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
   const [open, setOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [industriesOpen, setIndustriesOpen] = useState(false);
@@ -81,6 +85,21 @@ export function SiteHeader() {
   const servicesTriggerRef = useRef<HTMLAnchorElement>(null);
   const industriesWrapRef = useRef<HTMLDivElement>(null);
   const industriesTriggerRef = useRef<HTMLAnchorElement>(null);
+  const pageMatch = pathname.match(/^\/(services|industries)\/([^/]+)$/);
+  const dockWhatsAppMessage = (() => {
+    if (!pageMatch) return "Hello 100 Web Technologies, I would like to discuss my project.";
+
+    const [, pageType, slug] = pageMatch;
+    if (pageType === "services") {
+      const service = services.find((item) => item.slug === slug);
+      const name = service?.badge || slug.replaceAll("-", " ");
+      return `Hello 100 Web Technologies, I need ${name.toLowerCase()} for my business. Please share the next steps, timeline and a suitable quote.`;
+    }
+
+    const industry = industries.find((item) => item.slug === slug);
+    const name = industry?.name || slug.replaceAll("-", " ");
+    return `Hello 100 Web Technologies, I need digital growth support for my ${name} business. Please share the best solution and next steps.`;
+  })();
 
   const openServices = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -395,7 +414,7 @@ export function SiteHeader() {
         {open && (
           <motion.div
               key="mobile-menu-backdrop"
-              className="fixed inset-0 top-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
+              className="hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -410,17 +429,13 @@ export function SiteHeader() {
           <motion.div
               key="mobile-menu-panel"
               id="mobile-menu"
-              className="fixed inset-y-0 right-0 z-[60] flex w-[min(22rem,calc(100vw-1rem))] flex-col overflow-y-auto border-l border-border bg-background shadow-2xl lg:hidden"
-              initial={{ opacity: 0, x: 32 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 32 }}
-              transition={{ type: "spring", stiffness: 320, damping: 28, mass: 0.7 }}
+              className="absolute inset-x-0 top-full z-[60] flex max-h-[calc(100svh-4.5rem)] flex-col overflow-y-auto border-b border-border bg-white lg:hidden"
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
             >
-              <div className="flex items-center justify-between border-b border-border px-5 py-4">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-orange">100 Web Technologies</p>
-                  <p className="mt-1 text-base font-semibold text-foreground">Explore our site</p>
-                </div>
+              <div className="hidden">
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
@@ -599,6 +614,15 @@ export function SiteHeader() {
             </motion.div>
         )}
       </AnimatePresence>
+      <MobileNavigationDock
+        items={[
+          { label: "Home", icon: <Home className="h-5 w-5" />, onClick: () => { setOpen(false); navigate({ to: "/" }); } },
+          { label: "Services", icon: <BriefcaseBusiness className="h-5 w-5" />, onClick: () => { setOpen(false); navigate({ to: "/services" }); } },
+          { label: "Call +91 77802 73879", icon: <Phone className="h-5 w-5" />, onClick: () => { window.location.href = "tel:+917780273879"; } },
+          { label: "WhatsApp", icon: <img src={whatsappLogo} alt="" className="h-5 w-5" />, onClick: () => { setOpen(false); window.open(`https://wa.me/917780273879?text=${encodeURIComponent(dockWhatsAppMessage)}`, "_blank", "noopener,noreferrer"); } },
+          { label: open ? "Close menu" : "Open menu", icon: open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />, active: open, onClick: () => setOpen((value) => !value) },
+        ]}
+      />
       <style>{`[data-main-header] nav a{color:#172033!important}[data-main-header] nav a:hover{background:#f1f5f9!important;color:#172033!important}[data-main-header] input{border-color:#cbd5e1!important;background:#fff!important;color:#172033!important}[data-main-header] input::placeholder{color:#64748b!important}[data-main-header] .lucide-search{color:#172033!important}`}</style>
     </header>
   );

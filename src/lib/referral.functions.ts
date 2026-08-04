@@ -20,7 +20,7 @@ const leadSchema = z.object({
 });
 
 export const submitReferral = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => leadSchema.parse(input))
+  .validator((input: unknown) => leadSchema.parse(input))
   .handler(async ({ data }) => {
     const attempt = consumeRateLimit(`referral:${data.email.toLowerCase()}`, 3, 60 * 60 * 1000);
     if (!attempt.allowed) throw new Error("Too many referral submissions. Please try again later.");
@@ -49,7 +49,7 @@ export const listReferralAdmin = createServerFn({ method: "GET" })
 
 export const createCustomerInvite = createServerFn({ method: "POST" })
   .middleware([requirePostgresAuth])
-  .inputValidator((input: unknown) => z.object({
+  .validator((input: unknown) => z.object({
     email: z.string().email(), full_name: z.string().min(1), company: z.string().nullish(),
     referral_lead_id: z.string().uuid().nullish(),
   }).parse(input))
@@ -65,7 +65,7 @@ export const createCustomerInvite = createServerFn({ method: "POST" })
 
 export const createReferralCode = createServerFn({ method: "POST" })
   .middleware([requirePostgresAuth])
-  .inputValidator((input: unknown) => z.object({ customer_id: z.string().uuid(), code: z.string().min(3).max(40).regex(/^[A-Za-z0-9-]+$/) }).parse(input))
+  .validator((input: unknown) => z.object({ customer_id: z.string().uuid(), code: z.string().min(3).max(40).regex(/^[A-Za-z0-9-]+$/) }).parse(input))
   .handler(async ({ data, context }) => {
     await ensureAdmin(context);
     const { data: row, error } = await (context.db as any).from("referral_codes").upsert({ customer_id: data.customer_id, code: data.code.toUpperCase(), is_active: true }, { onConflict: "customer_id" }).select().single();
@@ -75,7 +75,7 @@ export const createReferralCode = createServerFn({ method: "POST" })
 
 export const setReferralPaid = createServerFn({ method: "POST" })
   .middleware([requirePostgresAuth])
-  .inputValidator((input: unknown) => z.object({ lead_id: z.string().uuid(), referred_customer_id: z.string().uuid(), payment_minor: z.number().int().positive() }).parse(input))
+  .validator((input: unknown) => z.object({ lead_id: z.string().uuid(), referred_customer_id: z.string().uuid(), payment_minor: z.number().int().positive() }).parse(input))
   .handler(async ({ data, context }) => {
     await ensureAdmin(context);
     const { error } = await (context.db as any).rpc("mark_referral_paid", {

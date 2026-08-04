@@ -43,6 +43,7 @@ import { Route as AuthenticatedAdminServicesRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin/team'
 import { Route as AuthenticatedAdminVideosRouteImport } from './routes/_authenticated/admin/videos'
 import { Route as ApiBlogCoverSlugRouteImport } from './routes/api.blog-cover.$slug'
+import { Route as ApiIndustryCardSlugRouteImport } from './routes/api.industry-card.$slug'
 import { Route as ApiMediaIdRouteImport } from './routes/api.media.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -221,6 +222,11 @@ const ApiBlogCoverSlugRoute = ApiBlogCoverSlugRouteImport.update({
   path: '/api/blog-cover/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiIndustryCardSlugRoute = ApiIndustryCardSlugRouteImport.update({
+  id: '/api/industry-card/$slug',
+  path: '/api/industry-card/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiMediaIdRoute = ApiMediaIdRouteImport.update({
   id: '/api/media/$id',
   path: '/api/media/$id',
@@ -260,6 +266,7 @@ export interface FileRoutesByFullPath {
   '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/admin/videos': typeof AuthenticatedAdminVideosRoute
   '/api/blog-cover/$slug': typeof ApiBlogCoverSlugRoute
+  '/api/industry-card/$slug': typeof ApiIndustryCardSlugRoute
   '/api/media/$id': typeof ApiMediaIdRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
 }
@@ -295,6 +302,7 @@ export interface FileRoutesByTo {
   '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/admin/videos': typeof AuthenticatedAdminVideosRoute
   '/api/blog-cover/$slug': typeof ApiBlogCoverSlugRoute
+  '/api/industry-card/$slug': typeof ApiIndustryCardSlugRoute
   '/api/media/$id': typeof ApiMediaIdRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
 }
@@ -333,6 +341,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRoute
   '/_authenticated/admin/videos': typeof AuthenticatedAdminVideosRoute
   '/api/blog-cover/$slug': typeof ApiBlogCoverSlugRoute
+  '/api/industry-card/$slug': typeof ApiIndustryCardSlugRoute
   '/api/media/$id': typeof ApiMediaIdRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
@@ -371,6 +380,7 @@ export interface FileRouteTypes {
     | '/admin/team'
     | '/admin/videos'
     | '/api/blog-cover/$slug'
+    | '/api/industry-card/$slug'
     | '/api/media/$id'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
@@ -406,6 +416,7 @@ export interface FileRouteTypes {
     | '/admin/team'
     | '/admin/videos'
     | '/api/blog-cover/$slug'
+    | '/api/industry-card/$slug'
     | '/api/media/$id'
     | '/admin'
   id:
@@ -443,6 +454,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/team'
     | '/_authenticated/admin/videos'
     | '/api/blog-cover/$slug'
+    | '/api/industry-card/$slug'
     | '/api/media/$id'
     | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
@@ -469,6 +481,7 @@ export interface RootRouteChildren {
   ServicesIndexRoute: typeof ServicesIndexRoute
   TeamIndexRoute: typeof TeamIndexRoute
   ApiBlogCoverSlugRoute: typeof ApiBlogCoverSlugRoute
+  ApiIndustryCardSlugRoute: typeof ApiIndustryCardSlugRoute
   ApiMediaIdRoute: typeof ApiMediaIdRoute
 }
 
@@ -712,6 +725,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiBlogCoverSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/industry-card/$slug': {
+      id: '/api/industry-card/$slug'
+      path: '/api/industry-card/$slug'
+      fullPath: '/api/industry-card/$slug'
+      preLoaderRoute: typeof ApiIndustryCardSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/media/$id': {
       id: '/api/media/$id'
       path: '/api/media/$id'
@@ -791,6 +811,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesIndexRoute: ServicesIndexRoute,
   TeamIndexRoute: TeamIndexRoute,
   ApiBlogCoverSlugRoute: ApiBlogCoverSlugRoute,
+  ApiIndustryCardSlugRoute: ApiIndustryCardSlugRoute,
   ApiMediaIdRoute: ApiMediaIdRoute,
 }
 export const routeTree = rootRouteImport

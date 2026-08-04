@@ -42,16 +42,21 @@ function IndustriesPage() {
                   <h2 className="text-xl font-bold tracking-tight sm:text-2xl">{cat}</h2>
                   <span className="text-xs text-muted-foreground">{items.length} industries</span>
                 </div>
-                <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {items.map((i) => (
                     <Link
                       key={i.slug}
                       to="/industries/$slug"
                       params={{ slug: i.slug }}
-                      className="group flex items-center justify-between gap-3 rounded-xl border bg-card px-4 py-3 text-sm font-medium transition hover:border-[var(--brand-orange)] hover:text-[var(--brand-orange)]"
+                      className="group overflow-hidden rounded-xl border bg-card transition hover:-translate-y-0.5 hover:border-[var(--brand-orange)] hover:shadow-lg"
                     >
-                      <span className="truncate">{i.name}</span>
-                      <ChevronRight className="h-4 w-4 shrink-0 opacity-40 transition group-hover:translate-x-0.5 group-hover:opacity-100" />
+                      <div className="relative aspect-[16/8] overflow-hidden bg-[var(--brand-navy)]">
+                        <img src={i.image_url || `/api/industry-card/${i.slug}`} alt={`Illustration for ${i.name}`} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" width={800} height={480} />
+                      </div>
+                      <div className="flex items-center justify-between gap-3 px-4 py-3.5">
+                        <span className="min-w-0 text-sm font-semibold text-[var(--brand-navy)] group-hover:text-[var(--brand-orange)]">{i.name}</span>
+                        <ChevronRight className="h-4 w-4 shrink-0 text-[var(--brand-navy)]/50 transition group-hover:translate-x-0.5 group-hover:text-[var(--brand-orange)] group-hover:opacity-100" />
+                      </div>
                     </Link>
                   ))}
                 </div>

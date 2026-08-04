@@ -110,7 +110,7 @@ const bannerSchema = z.object({
 
 export const upsertBanner = createServerFn({ method: "POST" })
   .middleware([requirePostgresAuth])
-  .inputValidator((d: unknown) => bannerSchema.parse(d))
+  .validator((d: unknown) => bannerSchema.parse(d))
   .handler(async ({ data, context }) => {
     await ensureEditor(context);
     const { id, ...values } = data;
@@ -135,7 +135,7 @@ export const upsertBanner = createServerFn({ method: "POST" })
 
 export const deleteBanner = createServerFn({ method: "POST" })
   .middleware([requirePostgresAuth])
-  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     await ensureEditor(context);
     const { error } = await context.db.from("popup_banners").delete().eq("id", data.id);
@@ -205,7 +205,7 @@ const teamMemberSchema = z.object({
 
 export const upsertTeamMember = createServerFn({ method: "POST" })
   .middleware([requirePostgresAuth])
-  .inputValidator((d: unknown) => teamMemberSchema.parse(d))
+  .validator((d: unknown) => teamMemberSchema.parse(d))
   .handler(async ({ data, context }) => {
     await ensureEditor(context);
     const payload = {
@@ -242,7 +242,7 @@ export const upsertTeamMember = createServerFn({ method: "POST" })
 
 export const deleteTeamMember = createServerFn({ method: "POST" })
   .middleware([requirePostgresAuth])
-  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     await ensureEditor(context);
     const { error } = await (context.db as any).from("team_members").delete().eq("id", data.id);
@@ -276,7 +276,7 @@ export const listBlogPosts = createServerFn({ method: "GET" })
 
 export const upsertBlogPost = createServerFn({ method: "POST" })
   .middleware([requirePostgresAuth])
-  .inputValidator((d: unknown) => blogPostSchema.parse(d))
+  .validator((d: unknown) => blogPostSchema.parse(d))
   .handler(async ({ data, context }) => {
     await ensureEditor(context);
     const payload = {
@@ -302,7 +302,7 @@ export const upsertBlogPost = createServerFn({ method: "POST" })
 
 export const deleteBlogPost = createServerFn({ method: "POST" })
   .middleware([requirePostgresAuth])
-  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     await ensureEditor(context);
     const { error } = await (context.db as any).from("blog_posts").delete().eq("id", data.id);
@@ -394,7 +394,7 @@ export const listGalleryItems = createServerFn({ method: "GET" })
 
 export const upsertGalleryItem = createServerFn({ method: "POST" })
   .middleware([requirePostgresAuth])
-  .inputValidator((d: unknown) => galleryItemSchema.parse(d))
+  .validator((d: unknown) => galleryItemSchema.parse(d))
   .handler(async ({ data, context }) => {
     await ensureEditor(context);
     const payload = { ...data, caption: data.caption || null, created_by: context.userId };
@@ -407,7 +407,7 @@ export const upsertGalleryItem = createServerFn({ method: "POST" })
 
 export const deleteGalleryItem = createServerFn({ method: "POST" })
   .middleware([requirePostgresAuth])
-  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     await ensureEditor(context);
     const { error } = await (context.db as any).from("gallery_items").delete().eq("id", data.id);
@@ -443,7 +443,7 @@ export const listVideos = createServerFn({ method: "GET" })
 
 export const upsertVideo = createServerFn({ method: "POST" })
   .middleware([requirePostgresAuth])
-  .inputValidator((d: unknown) => videoSchema.parse(d))
+  .validator((d: unknown) => videoSchema.parse(d))
   .handler(async ({ data, context }) => {
     await ensureEditor(context);
     const payload = {
@@ -461,7 +461,7 @@ export const upsertVideo = createServerFn({ method: "POST" })
 
 export const deleteVideo = createServerFn({ method: "POST" })
   .middleware([requirePostgresAuth])
-  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     await ensureEditor(context);
     const { error } = await (context.db as any).from("youtube_videos").delete().eq("id", data.id);

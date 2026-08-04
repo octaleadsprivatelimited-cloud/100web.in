@@ -5,6 +5,7 @@ import {
 import { services } from "../lib/services-data";
 import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
+import { FaqAccordion } from "../components/faq-accordion";
 import awsLogo from "../assets/partners/aws.svg";
 import azureLogo from "../assets/partners/azure.svg";
 import googleCloudLogo from "../assets/partners/google-cloud.svg";
@@ -28,6 +29,7 @@ import javaLogo from "../assets/partners/java.svg";
 import geminiLogo from "../assets/partners/gemini.svg";
 import claudeLogo from "../assets/partners/claude.svg";
 import vercelLogo from "../assets/partners/vercel.svg";
+import andhraTelanganaMap from "../assets/andhra-telangana-map.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -118,10 +120,13 @@ function Index() {
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
-      <SiteHeader />
+      <div className="hidden md:block">
+        <SiteHeader />
+      </div>
+      <main className="flex flex-col [&>section]:order-5 md:[&>section]:order-none">
 
       {/* HERO */}
-      <section className="relative isolate min-h-[620px] overflow-hidden bg-[#b9caf9] bg-[url('/images/service-backgrounds/aurora-light.webp')] bg-cover bg-center pt-8 sm:min-h-[650px] sm:pt-16">
+      <section className="relative isolate order-3 hidden min-h-[620px] overflow-hidden bg-[#b9caf9] bg-[url('/images/service-backgrounds/aurora-light.webp')] bg-cover bg-center pt-8 sm:min-h-[650px] sm:pt-16 md:block md:order-none">
         <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 pb-48 sm:px-6 md:grid-cols-2 lg:px-8">
           {/* Left: lavender content card */}
           <div className="hero-float relative z-10 max-w-xl rounded-xl bg-[#f4f2fa]/95 p-8 shadow-[0_30px_60px_-20px_rgba(10,31,68,0.35)] ring-1 ring-white/60 sm:p-10 md:p-11">
@@ -192,7 +197,7 @@ function Index() {
       </section>
 
       {/* SOLUTIONS STRIP */}
-      <section id="solutions" className="border-b bg-white">
+      <section id="solutions" className="!order-2 border-b bg-white md:order-none">
         <div className="technology-marquee overflow-hidden border-y border-slate-100 py-3 sm:py-4" aria-label="Technology logos">
           <div className="technology-marquee-track flex w-max flex-nowrap gap-2.5 sm:gap-3">
             {[0, 1].map((copy) => (
@@ -210,22 +215,22 @@ function Index() {
       </section>
 
       {/* SERVICES */}
-      <section id="services" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-        <div className="max-w-3xl">
+      <section id="services" className="!order-1 mx-auto flex min-h-[calc(100svh-5.75rem)] max-w-7xl px-3 py-3 sm:px-6 sm:py-20 lg:px-8 md:block md:min-h-0 md:order-none">
+        <div className="hidden max-w-3xl md:block">
           <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">What we do</h2>
           <p className="mt-5 text-lg text-muted-foreground">
             Catch up on the latest launches, solutions, and success stories across cloud, AI, and enterprise engineering.
           </p>
         </div>
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid min-h-0 flex-1 grid-cols-2 grid-rows-2 gap-2.5 sm:gap-3 md:mt-10 md:flex-none md:grid-rows-none md:gap-5 lg:grid-cols-3">
           {homepageServices.map((card) => (
             <Link
               key={card.slug}
               to="/services/$slug"
               params={{ slug: card.slug }}
-              className="group block overflow-hidden rounded-xl bg-[#f3f4f8] transition hover:-translate-y-0.5 hover:shadow-lg"
+              className={`group flex min-h-0 flex-col overflow-hidden rounded-xl border border-slate-200/80 bg-[#f3f4f8] transition duration-300 hover:-translate-y-0.5 hover:border-brand-orange/40 hover:shadow-lg ${homepageServiceOrder.includes(card.slug) ? "" : "hidden md:block"}`}
             >
-              <div className="relative aspect-[16/10] overflow-hidden">
+              <div className="relative h-[44%] shrink-0 overflow-hidden bg-slate-100 md:h-auto md:aspect-[16/10]">
                 <img
                   src={card.image}
                   alt={card.title}
@@ -235,12 +240,12 @@ function Index() {
                   height={576}
                 />
               </div>
-              <div className="flex flex-col justify-between p-5 sm:p-6">
+              <div className="flex flex-1 flex-col justify-between p-3 sm:p-6">
                 <div>
-                  <h3 className="text-base font-semibold leading-snug text-foreground">{card.badge}</h3>
-                  <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{card.desc}</p>
+                  <h3 className="text-sm font-semibold leading-snug text-foreground sm:text-base">{card.badge}</h3>
+                  <p className="mt-1 text-[11px] leading-[1.45] text-slate-600 sm:mt-2 sm:text-xs">{card.desc}</p>
                 </div>
-                <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[var(--brand-navy)] group-hover:text-[var(--brand-orange)]">
+                <div className="mt-2.5 inline-flex items-center gap-2 text-sm font-semibold text-[var(--brand-navy)] group-hover:text-[var(--brand-orange)] sm:mt-6">
                   <ArrowRight className="h-4 w-4" />
                 </div>
               </div>
@@ -248,6 +253,10 @@ function Index() {
           ))}
         </div>
       </section>
+
+      <div className="sticky top-0 z-50 order-3 md:hidden">
+        <SiteHeader />
+      </div>
 
       {/* SHORTS */}
       <section id="shorts" className="bg-muted/40 py-20">
@@ -386,12 +395,21 @@ function Index() {
       </section>
 
       {/* CTA */}
-      <section className="border-y bg-slate-50 py-16">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+      <section className="relative isolate overflow-hidden border-y bg-slate-50 py-10 sm:py-16">
+        <img
+          src={andhraTelanganaMap}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-contain object-center opacity-25 mix-blend-multiply md:hidden"
+        />
+        <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <p className="text-sm font-semibold uppercase tracking-wider text-brand-orange">Andhra Pradesh and Telangana</p>
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-brand-navy sm:text-4xl">Digital growth support for businesses across both states</h2>
           <p className="mt-4 max-w-3xl text-base leading-7 text-muted-foreground">From Hyderabad and Warangal to Vijayawada, Visakhapatnam, Tirupati and Guntur, we help businesses build useful digital products and earn visibility with clear service information, reliable websites and search-ready content.</p>
-          <div className="mt-8 grid gap-4 md:grid-cols-3">{localSeoFaqs.map((faq) => <article key={faq.question} className="rounded-xl border bg-white p-5 shadow-sm"><h3 className="text-base font-semibold text-brand-navy">{faq.question}</h3><p className="mt-3 text-sm leading-6 text-muted-foreground">{faq.answer}</p></article>)}</div>
+          <div className="mt-5 space-y-2 md:hidden">
+            <FaqAccordion items={localSeoFaqs.map((faq) => ({ q: faq.question, a: faq.answer }))} defaultOpenIndex={null} />
+          </div>
+          <div className="mt-8 hidden gap-4 md:grid md:grid-cols-3">{localSeoFaqs.map((faq) => <article key={faq.question} className="rounded-xl border bg-white p-5 shadow-sm"><h3 className="text-base font-semibold text-brand-navy">{faq.question}</h3><p className="mt-3 text-sm leading-6 text-muted-foreground">{faq.answer}</p></article>)}</div>
         </div>
       </section>
 
@@ -415,6 +433,7 @@ function Index() {
         </div>
       </section>
 
+      </main>
       <SiteFooter />
     </div>
   );

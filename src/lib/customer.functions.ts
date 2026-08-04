@@ -54,7 +54,7 @@ const contactSchema = z.object({
 
 export const updateCustomerContact = createServerFn({ method: "POST" })
   .middleware([requirePostgresAuth])
-  .inputValidator((input: unknown) => contactSchema.parse(input))
+  .validator((input: unknown) => contactSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { data: row, error } = await (context.db as any)
       .from("customer_accounts")
