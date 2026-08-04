@@ -37,6 +37,7 @@ export const Route = createFileRoute("/services/$slug")({
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:image", content: service.image },
       ],
+      links: [{ rel: "canonical", href: `/services/${service.slug}` }],
     };
   },
   component: ServiceDetail,

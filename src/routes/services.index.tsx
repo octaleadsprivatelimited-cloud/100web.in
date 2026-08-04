@@ -14,6 +14,7 @@ export const Route = createFileRoute("/services/")({
       { property: "og:description", content: "Enterprise engineering services delivered globally." },
       { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "/services" }],
   }),
   component: ServicesIndex,
 });

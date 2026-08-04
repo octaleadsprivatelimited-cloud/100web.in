@@ -6,6 +6,7 @@ import { services } from "../lib/services-data";
 import { industries } from "../lib/industries-data";
 import { MobileNavigationDock } from "./mobile-navigation-dock";
 import whatsappLogo from "../assets/whatsapp.svg";
+import siteLogo from "../assets/100web-logo.png";
 
 const bySlug = (slug: string) => services.find((s) => s.slug === slug)!;
 type GroupItem = ReturnType<typeof bySlug> & { icon?: LucideIcon; blurb?: string };
@@ -165,7 +166,7 @@ export function SiteHeader() {
       <div className="hidden bg-[#232f3e] text-white lg:block"><div className="mx-auto flex h-10 max-w-7xl items-center justify-end gap-7 px-6 text-xs font-semibold lg:px-8"><span className="inline-flex items-center gap-1.5"><Globe className="h-3.5 w-3.5" /> English <ChevronDown className="h-3 w-3" /></span><Link to="/contact" className="hover:text-brand-orange">Contact us</Link><Link to="/services" className="hover:text-brand-orange">Services</Link><Link to="/blog" className="hover:text-brand-orange">Resources</Link><Link to="/auth" className="inline-flex items-center gap-1 hover:text-brand-orange">My account <ChevronDown className="h-3 w-3" /></Link></div></div>
       <div data-main-header className="mx-auto flex max-w-7xl items-center justify-between gap-4 bg-white px-4 py-4 text-brand-navy sm:px-6 lg:px-8">
         <Link to="/" className="flex shrink-0 items-center" aria-label="100 Web Technologies — Home">
-          <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-orange font-black text-brand-navy">100</span>
+          <img src={siteLogo} alt="100 Web" className="h-10 w-auto object-contain sm:h-11" />
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
@@ -182,8 +183,8 @@ export function SiteHeader() {
                   <Link
                     ref={servicesTriggerRef}
                     to={n.to}
-                    className="flex items-center gap-1 rounded-full px-3 py-2 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
-                    activeProps={{ className: "flex items-center gap-1 rounded-full px-3 py-2 text-sm font-semibold bg-white/10 text-white" }}
+                    className="flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-brand-navy transition hover:bg-slate-100 hover:text-brand-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange/50"
+                    activeProps={{ className: "flex items-center gap-1 rounded-md bg-slate-100 px-3 py-2 text-sm font-semibold text-brand-navy" }}
                     onClick={() => setServicesOpen(false)}
                     onFocus={openServices}
                     onKeyDown={(e) => {
@@ -209,7 +210,7 @@ export function SiteHeader() {
                     role="menu"
                     aria-label="Solutions"
                     aria-hidden={!servicesOpen}
-                    className={`fixed left-1/2 top-[4.75rem] z-50 w-[720px] max-w-[calc(100vw-1.5rem)] -translate-x-1/2 overflow-hidden rounded-2xl border border-border bg-background text-foreground shadow-[0_20px_50px_rgba(0,0,0,0.15)] transition-all duration-200 ease-out lg:w-[920px] ${servicesOpen ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none -translate-y-1 opacity-0"}`}
+                    className={`fixed left-1/2 top-[4.75rem] z-50 w-[min(960px,calc(100vw-2rem))] max-h-[calc(100vh-5.5rem)] -translate-x-1/2 overflow-x-hidden overflow-y-auto rounded-b-xl border border-slate-200 bg-white text-foreground shadow-[0_20px_50px_rgba(15,23,42,0.2)] transition-all duration-200 ease-out ${servicesOpen ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none -translate-y-1 opacity-0"}`}
                     onMouseEnter={openServices}
                     onMouseLeave={scheduleCloseServices}
                   >
@@ -243,7 +244,7 @@ export function SiteHeader() {
                                         <span className="text-sm font-semibold text-foreground">{s.badge}</span>
                                         {featured && <span className="h-1.5 w-1.5 rounded-full bg-brand-orange" aria-hidden="true" />}
                                       </span>
-                                      <span className="text-[13px] leading-relaxed text-muted-foreground">
+                                      <span className="break-words text-[13px] leading-relaxed text-muted-foreground">
                                         {s.blurb ?? s.tagline}
                                       </span>
                                     </span>
@@ -292,8 +293,8 @@ export function SiteHeader() {
                   <Link
                     ref={industriesTriggerRef}
                     to={n.to}
-                    className="flex items-center gap-1 rounded-full px-3 py-2 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
-                    activeProps={{ className: "flex items-center gap-1 rounded-full px-3 py-2 text-sm font-semibold bg-white/10 text-white" }}
+                    className="flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-brand-navy transition hover:bg-slate-100 hover:text-brand-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange/50"
+                    activeProps={{ className: "flex items-center gap-1 rounded-md bg-slate-100 px-3 py-2 text-sm font-semibold text-brand-navy" }}
                     onClick={() => setIndustriesOpen(false)}
                     onFocus={openIndustries}
                     onKeyDown={(e) => {
@@ -319,7 +320,7 @@ export function SiteHeader() {
                     role="menu"
                     aria-label="Industries"
                     aria-hidden={!industriesOpen}
-                    className={`fixed left-1/2 top-[4.75rem] z-50 w-[640px] max-w-[calc(100vw-1.5rem)] -translate-x-1/2 overflow-hidden rounded-2xl border border-border bg-background text-foreground shadow-[0_20px_50px_rgba(0,0,0,0.15)] transition-all duration-200 ease-out ${industriesOpen ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none -translate-y-1 opacity-0"}`}
+                    className={`fixed left-1/2 top-[4.75rem] z-50 w-[min(760px,calc(100vw-2rem))] max-h-[calc(100vh-5.5rem)] -translate-x-1/2 overflow-x-hidden overflow-y-auto rounded-b-xl border border-slate-200 bg-white text-foreground shadow-[0_20px_50px_rgba(15,23,42,0.2)] transition-all duration-200 ease-out ${industriesOpen ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none -translate-y-1 opacity-0"}`}
                     onMouseEnter={openIndustries}
                     onMouseLeave={scheduleCloseIndustries}
                   >
@@ -341,7 +342,7 @@ export function SiteHeader() {
                               <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-orange/10 text-brand-orange transition-colors duration-150 group-hover:bg-brand-orange group-hover:text-white">
                                 <Icon className="h-4 w-4" aria-hidden="true" />
                               </span>
-                              <span className="min-w-0 flex flex-col gap-1">
+                              <span className="min-w-0 flex flex-col gap-1 break-words">
                                 <span className="text-sm font-semibold text-foreground">{ind.name}</span>
                                 <span className="text-[13px] leading-relaxed text-muted-foreground">{ind.category}</span>
                               </span>
@@ -369,8 +370,8 @@ export function SiteHeader() {
               <Link
                 key={n.label}
                 to={n.to}
-                className="flex items-center gap-1 rounded-full px-3 py-2 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
-                activeProps={{ className: "flex items-center gap-1 rounded-full px-3 py-2 text-sm font-semibold bg-white/10 text-white" }}
+                className="flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-brand-navy transition hover:bg-slate-100 hover:text-brand-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange/50"
+                activeProps={{ className: "flex items-center gap-1 rounded-md bg-slate-100 px-3 py-2 text-sm font-semibold text-brand-navy" }}
               >
                 {n.label}
               </Link>
@@ -380,11 +381,11 @@ export function SiteHeader() {
 
         <div className="hidden items-center gap-3 lg:flex">
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-white/60" />
+            <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-navy/55" />
             <input
               type="text"
               placeholder="Search"
-              className="h-9 w-48 rounded-full border border-white/20 bg-white/10 pl-9 pr-3 text-sm text-white placeholder:text-white/60 focus:border-white/40 focus:outline-none lg:w-56"
+              className="h-9 w-48 rounded-md border border-slate-300 bg-white pl-9 pr-3 text-sm text-brand-navy placeholder:text-brand-navy/50 focus:border-brand-orange focus:outline-none lg:w-56"
             />
           </div>
           <Link to="/auth" className="text-sm font-medium text-brand-navy transition hover:text-brand-orange">

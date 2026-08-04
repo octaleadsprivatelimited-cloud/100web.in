@@ -12,6 +12,7 @@ export const Route = createFileRoute("/contact")({
       { property: "og:description", content: "Get in touch with our engineering team." },
       { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "/contact" }],
   }),
   component: ContactPage,
 });

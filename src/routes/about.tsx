@@ -12,6 +12,7 @@ export const Route = createFileRoute("/about")({
       { property: "og:description", content: "Senior engineers, outcome-driven delivery, worldwide." },
       { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "/about" }],
   }),
   component: AboutPage,
 });

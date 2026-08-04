@@ -15,6 +15,7 @@ export const Route = createFileRoute("/team/")({
       { property: "og:title", content: "Team — 100 Web Technologies" },
       { property: "og:description", content: "Meet the leaders at 100 Web Technologies." },
     ],
+    links: [{ rel: "canonical", href: "/team" }],
   }),
   component: TeamPage,
 });

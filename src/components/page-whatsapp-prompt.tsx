@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Send, X } from "lucide-react";
 import { services } from "../lib/services-data";
 import { industries } from "../lib/industries-data";
+import { getDirectoryIndustryPhoto } from "../lib/industry-directory-photos";
 import whatsappLogo from "../assets/whatsapp.svg";
 
 const WHATSAPP_NUMBER = "917780273879";
@@ -19,12 +20,14 @@ export function PageWhatsAppPrompt() {
     if (type === "services") {
       const service = services.find((item) => item.slug === slug);
       const name = service?.badge || slug.replaceAll("-", " ");
-      return { title: `Need ${name}?`, message: `Hello 100 Web Technologies, I need ${name.toLowerCase()} for my business. Please share the next steps, timeline and a suitable quote.` };
+      return { title: `Ask about ${name}`, image: service?.image, message: `Hello, I need ${name.toLowerCase()} for my business. Please share details.` };
     }
 
     const industry = industries.find((item) => item.slug === slug);
     const name = industry?.name || slug.replaceAll("-", " ");
-    return { title: `Growing a ${name} business?`, message: `Hello 100 Web Technologies, I need digital growth support for my ${name} business. Please share the best solution and next steps.` };
+    const position = industries.filter((item) => item.category === industry?.category).findIndex((item) => item.slug === slug);
+    const image = industry ? getDirectoryIndustryPhoto(industry.category, position) : null;
+    return { title: `Ask about ${name}`, image, message: `Hello, I need digital support for my ${name} business. Please share details.` };
   }, [pathname]);
 
   useEffect(() => {
@@ -45,17 +48,17 @@ export function PageWhatsAppPrompt() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 18, scale: 0.97 }}
           transition={{ duration: 0.24, ease: "easeOut" }}
-          className="fixed bottom-16 right-4 z-[75] w-[min(19rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-emerald-200 bg-white shadow-[0_18px_42px_rgba(15,23,42,0.2)] sm:bottom-6 sm:right-6"
+          className="fixed bottom-20 right-3 z-[75] w-[min(17.5rem,calc(100vw-1.5rem))] overflow-hidden rounded-2xl border border-emerald-200 bg-white shadow-[0_18px_42px_rgba(15,23,42,0.2)] sm:bottom-6 sm:right-6 sm:w-[19rem]"
           aria-label="WhatsApp help"
         >
           <div className="flex items-center justify-between gap-3 bg-[#075E54] px-4 py-3 text-white">
-            <div className="flex items-center gap-2"><img src={whatsappLogo} alt="" className="h-6 w-6" /><p className="text-sm font-bold">{prompt.title}</p></div>
+            <div className="min-w-0 flex items-center gap-2"><img src={whatsappLogo} alt="" className="h-5 w-5 shrink-0" /><p className="truncate text-sm font-bold">{prompt.title}</p></div>
             <button type="button" onClick={() => setIsOpen(false)} aria-label="Close WhatsApp prompt" className="rounded-md p-1 text-white/80 hover:bg-white/10 hover:text-white"><X className="h-4 w-4" /></button>
           </div>
-          <div className="p-3.5">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Your prefilled message</p>
-            <p className="rounded-xl bg-slate-100 px-3 py-2.5 text-sm leading-5 text-slate-700">{prompt.message}</p>
-            <a href={whatsappUrl} target="_blank" rel="noreferrer" className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-3 py-2.5 text-sm font-bold text-[#063b2f] transition hover:brightness-95"><Send className="h-4 w-4" /> Chat on WhatsApp</a>
+          <div className="p-3">
+            {prompt.image && <div className="mb-2 aspect-[16/7] overflow-hidden rounded-xl bg-slate-100">{typeof prompt.image === "string" ? <img src={prompt.image} alt="" className="h-full w-full object-cover" /> : <div role="img" aria-label={`${prompt.title} preview`} className="h-full w-full bg-cover" style={{ backgroundImage: `url(${prompt.image.src})`, backgroundSize: prompt.image.imageSize, backgroundPosition: prompt.image.crop }} />}</div>}
+            <p className="rounded-lg bg-slate-100 px-3 py-2 text-xs leading-4 text-slate-700">{prompt.message}</p>
+            <a href={whatsappUrl} target="_blank" rel="noreferrer" className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-3 py-2.5 text-sm font-bold text-[#063b2f] transition hover:brightness-95"><Send className="h-4 w-4" /> WhatsApp</a>
           </div>
         </motion.aside>
       )}

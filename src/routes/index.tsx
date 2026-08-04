@@ -30,6 +30,7 @@ import geminiLogo from "../assets/partners/gemini.svg";
 import claudeLogo from "../assets/partners/claude.svg";
 import vercelLogo from "../assets/partners/vercel.svg";
 import andhraTelanganaMap from "../assets/andhra-telangana-map.png";
+import industryHighlights from "../assets/industry-highlights.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -46,9 +47,17 @@ export const Route = createFileRoute("/")({
 });
 
 const industries = [
-  "Financial Services", "Healthcare", "Retail & E-commerce", "Manufacturing",
-  "Education", "Media & Entertainment", "Logistics", "Government",
+  { name: "Financial Services", slug: "bank" },
+  { name: "Healthcare", slug: "hospital" },
+  { name: "Retail & E-commerce", slug: "e-commerce-seller" },
+  { name: "Manufacturing", slug: "manufacturing-unit" },
+  { name: "Education", slug: "school" },
+  { name: "Media & Entertainment", slug: "media-house" },
+  { name: "Logistics", slug: "logistics-company" },
+  { name: "Community & Public Sector", slug: "ngo" },
 ];
+
+const industryImagePositions = ["0% 0%", "33.333% 0%", "66.667% 0%", "100% 0%", "0% 100%", "33.333% 100%", "66.667% 100%", "100% 100%"];
 
 const stats = [
   { k: "250+", v: "Enterprise clients" },
@@ -286,7 +295,7 @@ function Index() {
       </section>
 
       {/* INDUSTRIES */}
-      <section id="industries" className="bg-muted/40 py-20">
+      <section id="industries" className="bg-muted/40 py-10 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-10 md:grid-cols-2 md:items-end">
             <div>
@@ -295,12 +304,12 @@ function Index() {
             </div>
             <p className="text-muted-foreground md:text-right">Deep domain expertise across regulated and high-scale sectors, delivered by engineers who understand your business.</p>
           </div>
-          <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {industries.map(i => (
-              <div key={i} className="flex items-center gap-3 rounded-lg border bg-card px-4 py-4 text-sm font-medium transition hover:border-[var(--brand-orange)]/60 hover:shadow-md">
-                <Check className="h-4 w-4 text-[var(--brand-orange)]" />
-                {i}
-              </div>
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-10 sm:grid-cols-3 lg:grid-cols-4">
+            {industries.map((industry, index) => (
+              <Link key={industry.slug} to="/industries/$slug" params={{ slug: industry.slug }} className="group overflow-hidden rounded-xl border border-slate-200 bg-card transition hover:-translate-y-0.5 hover:border-[var(--brand-orange)]/60 hover:shadow-md">
+                <div role="img" aria-label={`${industry.name} digital solutions`} className="aspect-[16/9] overflow-hidden bg-slate-100 transition duration-300 group-hover:scale-105" style={{ backgroundImage: `url(${industryHighlights})`, backgroundPosition: industryImagePositions[index], backgroundSize: "400% 200%" }} />
+                <div className="flex items-center justify-between gap-2 px-3 py-2.5 sm:px-4 sm:py-3"><span className="text-xs font-semibold leading-snug text-brand-navy sm:text-sm">{industry.name}</span><ArrowRight className="h-3.5 w-3.5 shrink-0 text-brand-orange" /></div>
+              </Link>
             ))}
           </div>
         </div>

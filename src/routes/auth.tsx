@@ -4,6 +4,7 @@ import { Loader2, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { getSessionUser, login } from "@/lib/auth.functions";
+import siteLogo from "../assets/100web-logo.png";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [
@@ -39,7 +40,7 @@ function AuthPage() {
 
   return <div className="grid min-h-screen bg-background lg:grid-cols-2">
     <div className="hidden flex-col justify-between bg-brand-navy p-12 text-white lg:flex">
-      <Link to="/" className="flex items-center gap-2"><span className="grid h-10 w-10 place-items-center rounded-lg bg-brand-orange font-black text-brand-navy">100</span><span className="text-lg font-semibold">100 Web Technologies</span></Link>
+      <Link to="/" className="flex items-center gap-2"><span className="rounded-lg bg-white px-1.5 py-1"><img src={siteLogo} alt="100 Web" className="h-9 w-auto object-contain" /></span><span className="text-lg font-semibold">100 Web Technologies</span></Link>
       <div><h2 className="text-3xl font-bold leading-tight">Your projects, renewals and services in one secure workspace.</h2><p className="mt-4 text-white/70">Customer access is provisioned and managed by the website administrator.</p></div>
       <p className="text-xs text-white/50">© {new Date().getFullYear()} 100 Web Technologies</p>
     </div>

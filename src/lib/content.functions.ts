@@ -8,6 +8,7 @@ export type ManagedIndustry = Industry & {
   description?: string;
   hero_title?: string;
   image_url?: string;
+  hero_video_url?: string;
   pdf_url?: string | null;
   is_active?: boolean;
 };

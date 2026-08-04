@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Check, Play, Star, Sparkles, AlertCircle, Package, Target, Cog, TrendingUp, Award, Download } from "lucide-react";
 import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
@@ -19,12 +20,18 @@ import {
   type Industry,
 } from "../lib/industries-data";
 import { getPublicIndustry, listPublicIndustries, type ManagedIndustry } from "../lib/content.functions";
+import { getIndustryPhotos } from "../lib/industry-photo-sets";
 import overviewBg from "../assets/overview-bg.webp";
 import aboutBg from "../assets/about-bg.jpg";
 import featuresBg from "../assets/features-bg.webp";
 import aidaBg from "../assets/aida-bg.webp";
 import reasonsBg from "../assets/reasons-bg.webp";
 import packageBg from "../assets/package-bg.webp";
+import fitnessCenterOverviews from "../assets/fitness-center-overviews.png";
+import resultsOutcomes from "../assets/results-outcomes.png";
+import processBackground from "../assets/process-background.png";
+
+const youtubeId = (url?: string) => url?.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?v=|embed\/|shorts\/))([^?&/]+)/)?.[1] ?? null;
 
 export const Route = createFileRoute("/industries/$slug")({
   loader: async ({ params }) => {
@@ -50,6 +57,7 @@ export const Route = createFileRoute("/industries/$slug")({
         { property: "og:description", content: desc },
         { property: "og:type", content: "website" },
       ],
+      links: [{ rel: "canonical", href: `/industries/${industry.slug}` }],
     };
   },
   component: IndustryDetail,
@@ -81,7 +89,44 @@ function IndustryDetail() {
   const approach = buildApproach();
   const stats = buildStats(industry.name);
   const reasons = buildReasons(industry.name);
+  const videoId = youtubeId(industry.hero_video_url);
   const related = industries.filter((i) => i.category === industry.category && i.slug !== industry.slug).slice(0, 6);
+  const overviewImages = industry.slug === "fitness-center"
+    ? [
+        { src: fitnessCenterOverviews, tone: "", crop: "0% 50%", imageSize: "300% 100%" },
+        { src: fitnessCenterOverviews, tone: "", crop: "50% 50%", imageSize: "300% 100%" },
+        { src: fitnessCenterOverviews, tone: "", crop: "100% 50%", imageSize: "300% 100%" },
+      ]
+    : getIndustryPhotos(industry.category).map((image) => ({ ...image, tone: "" }));
+  const [overviewSlide, setOverviewSlide] = useState(0);
+  const overviewCarouselRef = useRef<HTMLDivElement>(null);
+  const overviewSectionRef = useRef<HTMLElement>(null);
+  const [overviewInView, setOverviewInView] = useState(false);
+
+  useEffect(() => {
+    const section = overviewSectionRef.current;
+    if (!section) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setOverviewInView(entry.isIntersecting),
+      { threshold: 0.2 },
+    );
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    setOverviewSlide(0);
+    if (!overviewInView) return;
+    const timer = window.setInterval(() => setOverviewSlide((current) => (current + 1) % overviewImages.length), 4200);
+    return () => window.clearInterval(timer);
+  }, [industry.slug, overviewImages.length, overviewInView]);
+
+  useEffect(() => {
+    if (!overviewInView) return;
+    const card = overviewCarouselRef.current?.children[overviewSlide] as HTMLElement | undefined;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    card?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "nearest", inline: "center" });
+  }, [overviewSlide, overviewInView]);
 
   const TOTAL = 11;
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -131,8 +176,8 @@ function IndustryDetail() {
 
           {/* Video placeholder */}
           <div className="relative aspect-video overflow-hidden rounded-xl border border-white/60 bg-white shadow-[0_24px_60px_rgba(10,31,68,0.22)]">
-            {industry.image_url && <img src={industry.image_url} alt={industry.name} className="absolute inset-0 h-full w-full object-cover" />}
-            <div className="absolute inset-0 grid place-items-center">
+            {videoId ? <iframe className="absolute inset-0 h-full w-full" src={`https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`} title={`${industry.name} video`} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen /> : industry.image_url && <img src={industry.image_url} alt={industry.name} className="absolute inset-0 h-full w-full object-cover" />}
+            {!videoId && <div className="absolute inset-0 grid place-items-center">
               <button
                 type="button"
                 aria-label={`Play ${industry.name} showreel`}
@@ -140,18 +185,18 @@ function IndustryDetail() {
               >
                 <Play className="ml-1 h-8 w-8 fill-current" />
               </button>
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between border-t border-white/10 bg-black/30 px-4 py-3 text-xs text-white/70 backdrop-blur">
+            </div>}
+            {!videoId && <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between border-t border-white/10 bg-black/30 px-4 py-3 text-xs text-white/70 backdrop-blur">
               <span>Case study · {industry.name}</span>
               <span>0:00 / 1:20</span>
-            </div>
+            </div>}
           </div>
         </div>
       </section>
 
       {/* Overview + images */}
-      <section className="relative bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16 md:py-20 lg:px-8">
+      <section ref={overviewSectionRef} className="relative bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 md:py-14 lg:px-8">
         <Counter n={1} tone="light" />
         <div
           className="relative overflow-hidden rounded-2xl border border-white/15 p-5 sm:p-8"
@@ -175,23 +220,13 @@ function IndustryDetail() {
         <div className="mt-6 sm:mt-12">
           {/* Mobile: swipeable snap slider */}
           <div className="-mx-4 sm:hidden">
-            <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-4 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {[
-                "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1200&q=70",
-                "https://images.unsplash.com/photo-1522199755839-a2bacb67c546?auto=format&fit=crop&w=1200&q=70",
-                "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=70",
-              ].map((src, i) => (
+            <div ref={overviewCarouselRef} className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-4 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" style={{ scrollBehavior: "smooth", WebkitOverflowScrolling: "touch" }}>
+              {overviewImages.map((image, i) => (
                 <div
                   key={i}
-                  className="relative aspect-[4/3] w-[82%] shrink-0 snap-center overflow-hidden rounded-xl border border-white/15 bg-white/5"
+                  className="relative aspect-[4/3] w-[82%] shrink-0 snap-center snap-always overflow-hidden rounded-xl border border-white/15 bg-white/5 transition-all duration-500 ease-out"
                 >
-                  <img
-                    src={src}
-                    alt={`${industry.name} example ${i + 1}`}
-                    loading="lazy"
-                    draggable={false}
-                    className="h-full w-full select-none object-cover"
-                  />
+                  {image.crop ? <div role="img" aria-label={`${industry.name} digital solution`} className={`h-full w-full ${image.tone}`} style={{ backgroundImage: `url(${image.src})`, backgroundSize: image.imageSize ?? "400% 200%", backgroundPosition: image.crop }} /> : <img src={image.src} alt={`${industry.name} digital solution ${i + 1}`} loading="lazy" draggable={false} className={`h-full w-full select-none object-cover ${image.tone}`} />}
                 </div>
               ))}
             </div>
@@ -202,18 +237,9 @@ function IndustryDetail() {
 
           {/* Desktop: 3-up grid */}
           <div className="hidden gap-4 sm:grid sm:grid-cols-3">
-            {[
-              "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1200&q=70",
-              "https://images.unsplash.com/photo-1522199755839-a2bacb67c546?auto=format&fit=crop&w=1200&q=70",
-              "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=70",
-            ].map((src, i) => (
+            {overviewImages.map((image, i) => (
               <div key={i} className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/15 bg-white/5">
-                <img
-                  src={src}
-                  alt={`${industry.name} example ${i + 1}`}
-                  loading="lazy"
-                  className="h-full w-full object-cover transition duration-500 hover:scale-105"
-                />
+                {image.crop ? <div role="img" aria-label={`${industry.name} digital solution`} className={`h-full w-full transition duration-500 hover:scale-105 ${image.tone}`} style={{ backgroundImage: `url(${image.src})`, backgroundSize: image.imageSize ?? "400% 200%", backgroundPosition: image.crop }} /> : <img src={image.src} alt={`${industry.name} digital solution ${i + 1}`} loading="lazy" className={`h-full w-full object-cover transition duration-500 hover:scale-105 ${image.tone}`} />}
               </div>
             ))}
           </div>
@@ -224,7 +250,7 @@ function IndustryDetail() {
       </section>
 
       {/* About the industry */}
-      <section className="relative border-y py-10 sm:py-16 md:py-20">
+      <section className="relative border-y py-8 sm:py-12 md:py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Counter n={2} />
           <div
@@ -262,7 +288,7 @@ function IndustryDetail() {
       </section>
 
       {/* Results */}
-      <section id="results" className="bg-muted/40 py-10 sm:py-16 md:py-20">
+      <section id="results" className="bg-muted/40 py-8 sm:py-12 md:py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Counter n={3} />
           <div className="rounded-2xl border bg-card/60 p-5 sm:p-8">
@@ -272,8 +298,18 @@ function IndustryDetail() {
             <p className="mt-2 text-sm text-muted-foreground sm:mt-3 sm:text-base">Averages across our {industry.category.toLowerCase()} clients within the first 6 months.</p>
           </div>
           <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-10 sm:gap-6 lg:grid-cols-4">
-            {results.map((r) => (
+            {results.map((r, index) => (
               <div key={r.label} className="rounded-xl border bg-card p-4 sm:rounded-2xl sm:p-6" style={{ boxShadow: "var(--shadow-card)" }}>
+                <div
+                  role="img"
+                  aria-label={`${r.label} visual`}
+                  className="mb-3 aspect-[16/7] overflow-hidden rounded-lg bg-slate-100 sm:mb-4"
+                  style={{
+                    backgroundImage: `url(${resultsOutcomes})`,
+                    backgroundSize: "400% 100%",
+                    backgroundPosition: `${index === 0 ? "0%" : index === 1 ? "33.333%" : index === 2 ? "66.667%" : "100%"} 50%`,
+                  }}
+                />
                 <div className="text-2xl font-black text-brand-orange sm:text-4xl">{r.metric}</div>
                 <p className="mt-2 text-xs text-muted-foreground sm:mt-3 sm:text-sm">{r.label}</p>
               </div>
@@ -284,7 +320,7 @@ function IndustryDetail() {
       </section>
 
       {/* Offerings / What you get */}
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16 md:py-20 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 md:py-14 lg:px-8">
         <Counter n={4} />
         <div
           className="relative overflow-hidden rounded-2xl border border-brand-navy/15 p-5 sm:p-8"
@@ -318,28 +354,31 @@ function IndustryDetail() {
       </section>
 
       {/* Delivery process */}
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16 md:py-20 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 md:py-14 lg:px-8">
         <Counter n={5} />
-        <div className="rounded-2xl border border-brand-navy/15 bg-brand-navy p-5 sm:p-8 text-white">
+        <div className="relative overflow-hidden rounded-2xl border border-brand-navy/15 bg-brand-navy p-5 sm:p-8 text-white" style={{ backgroundImage: `url(${processBackground})`, backgroundSize: "cover", backgroundPosition: "center" }}>
+        <div aria-hidden className="absolute inset-0 bg-[linear-gradient(100deg,rgba(7,20,45,0.95),rgba(7,20,45,0.78),rgba(7,20,45,0.9))]" />
+        <div className="relative">
         <div className="max-w-2xl">
           <p className="text-xs font-semibold uppercase tracking-wider text-brand-orange sm:text-sm">Our process</p>
           <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">From first call to live site in 2–4 weeks</h2>
           <p className="mt-2 text-sm text-white/70 sm:mt-3 sm:text-base">A calm, weekly cadence — no surprises, no jargon, no chasing.</p>
         </div>
-        <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-10 sm:gap-6 lg:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-2.5 sm:mt-10 sm:gap-6 lg:grid-cols-4">
           {deliveryProcess.map((p) => (
-            <div key={p.step} className="rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur sm:rounded-2xl sm:p-6">
-              <div className="text-2xl font-black text-brand-orange sm:text-3xl">{p.step}</div>
-              <h3 className="mt-2 text-sm font-semibold sm:mt-3 sm:text-lg">{p.title}</h3>
-              <p className="mt-1.5 text-xs text-white/70 sm:mt-2 sm:text-sm">{p.desc}</p>
+            <div key={p.step} className="rounded-xl border border-white/15 bg-white/10 p-3 backdrop-blur-md sm:rounded-2xl sm:p-6">
+              <div className="text-xl font-black text-brand-orange sm:text-3xl">{p.step}</div>
+              <h3 className="mt-1.5 text-sm font-semibold sm:mt-3 sm:text-lg">{p.title}</h3>
+              <p className="mt-1 text-[11px] leading-4 text-white/75 sm:mt-2 sm:text-sm">{p.desc}</p>
             </div>
           ))}
+        </div>
         </div>
         </div>
       </section>
 
       {/* Package Includes */}
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16 md:py-20 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 md:py-14 lg:px-8">
         <Counter n={6} />
         <div
           className="relative overflow-hidden rounded-2xl border border-brand-navy/15 p-5 sm:p-8"
@@ -378,7 +417,7 @@ function IndustryDetail() {
       </section>
 
       {/* AIDA Strategy */}
-      <section className="border-y bg-muted/30 py-10 sm:py-16 md:py-20">
+      <section className="border-y bg-muted/30 py-8 sm:py-12 md:py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Counter n={7} />
           <div
@@ -419,7 +458,7 @@ function IndustryDetail() {
       </section>
 
       {/* Regular Approach */}
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16 md:py-20 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 md:py-14 lg:px-8">
         <Counter n={8} />
         <div className="rounded-2xl border bg-card/40 p-5 sm:p-8">
         <div className="max-w-2xl">
@@ -448,7 +487,7 @@ function IndustryDetail() {
       </section>
 
       {/* Impact stats */}
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16 md:py-20 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 md:py-14 lg:px-8">
         <Counter n={9} />
         <div className="rounded-2xl border border-brand-navy/15 bg-brand-navy p-5 sm:p-8 text-white">
         <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-end">
@@ -479,7 +518,7 @@ function IndustryDetail() {
       </section>
 
       {/* Reasons to Choose Us */}
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16 md:py-20 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 md:py-14 lg:px-8">
         <Counter n={10} />
         <div
           className="relative overflow-hidden rounded-2xl border border-brand-navy/15 p-5 sm:p-8"
@@ -523,7 +562,7 @@ function IndustryDetail() {
 
       {/* CTA Banner */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mt-16 overflow-hidden rounded-3xl bg-brand-navy px-6 py-12 text-white sm:px-12 sm:py-14">
+        <div className="mt-10 overflow-hidden rounded-3xl bg-brand-navy px-6 py-9 text-white sm:px-12 sm:py-12">
           <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
             <div className="min-w-0">
               <div className="flex items-center gap-2 text-brand-orange">
@@ -541,7 +580,7 @@ function IndustryDetail() {
       </section>
 
       {/* FAQ */}
-      <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-16 md:py-20 lg:px-8">
+      <section className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12 md:py-14 lg:px-8">
         <Counter n={11} />
         <div className={`rounded-2xl border border-brand-navy/15 ${gradient} p-5 sm:p-8`}>
         <div className="text-center">
@@ -557,7 +596,7 @@ function IndustryDetail() {
       </section>
 
       {/* Contact form */}
-      <section id="contact" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <section id="contact" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-14 lg:px-8">
         <div className="overflow-hidden rounded-3xl border bg-card p-8 md:p-14" style={{ boxShadow: "var(--shadow-elevated)" }}>
           <div className="grid gap-10 md:grid-cols-2 md:items-start">
             <div>
@@ -599,7 +638,7 @@ function IndustryDetail() {
 
       {/* Related in same category */}
       {related.length > 0 && (
-        <section className="bg-muted/40 py-16 md:py-20">
+        <section className="bg-muted/40 py-10 md:py-14">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">More in {industry.category}</h2>
             <div className="mt-6 flex flex-wrap gap-2">
