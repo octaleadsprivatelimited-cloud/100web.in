@@ -242,14 +242,16 @@ function Index() {
       </section>
 
       {/* SERVICES */}
-      <section id="services" className="!order-1 mx-auto flex min-h-[calc(100svh-5.75rem)] max-w-7xl px-3 py-3 sm:px-6 sm:py-20 lg:px-8 md:block md:min-h-0 md:order-none">
-        <div className="hidden max-w-3xl md:block">
-          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">What we do</h2>
-          <p className="mt-5 text-lg text-muted-foreground">
+      <section id="services" className="!order-1 flex min-h-[calc(100svh-5.75rem)] w-full bg-black px-3 py-3 sm:px-6 sm:py-20 lg:px-8 md:block md:min-h-0 md:order-none">
+        <div className="mx-auto hidden max-w-7xl md:block">
+          <div className="max-w-3xl">
+          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">What we do</h2>
+          <p className="mt-5 text-lg text-white/70">
             Catch up on the latest launches, solutions, and success stories across cloud, AI, and enterprise engineering.
           </p>
+          </div>
         </div>
-        <div className="grid min-h-0 flex-1 grid-cols-2 grid-rows-2 gap-2.5 sm:gap-3 md:mt-10 md:flex-none md:grid-rows-none md:gap-5 lg:grid-cols-3">
+        <div className="mx-auto grid min-h-0 max-w-7xl flex-1 grid-cols-2 grid-rows-2 gap-2.5 sm:gap-3 md:mt-10 md:flex-none md:grid-rows-none md:gap-5 lg:grid-cols-3">
           {homepageServices.map((card) => {
             const primaryService = primaryServiceCardDetails[card.slug];
             return (
@@ -347,15 +349,18 @@ function Index() {
         </div>
       </section>
 
-      {/* GLOBAL */}
-      <section id="global" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      {/* LOCAL FOCUS */}
+      <section id="local" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="grid gap-12 md:grid-cols-2 md:items-center">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wider text-[var(--brand-orange)]">Global reach</p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Delivering across 40+ countries</h2>
+            <p className="text-sm font-semibold uppercase tracking-wider text-[var(--brand-orange)]">Local expertise</p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Built for businesses in Andhra Pradesh &amp; Telangana</h2>
+            {/*
             <p className="mt-4 text-muted-foreground">Our distributed engineering teams operate around the clock across the Americas, Europe, Middle East, Africa and Asia-Pacific — so your platforms never sleep.</p>
+            */}
+            <p className="mt-4 text-muted-foreground">100 Web Technologies helps local businesses turn ideas into practical websites, apps and growth campaigns — with a team that understands your market, customers and pace.</p>
             <ul className="mt-6 space-y-3 text-sm">
-              {["Follow-the-sun engineering & support", "Data residency in 15+ regions", "Compliance: SOC 2, ISO 27001, GDPR, HIPAA", "Local partners in every major market"].map(x => (
+              {["Clear, local-language project communication", "Online and on-site discovery sessions when needed", "Solutions sized for growing businesses, not enterprise overhead", "Ongoing support after your website or app goes live"].map(x => (
                 <li key={x} className="flex items-start gap-3"><Check className="mt-0.5 h-4 w-4 text-[var(--brand-orange)]" />{x}</li>
               ))}
             </ul>
@@ -366,11 +371,11 @@ function Index() {
             </div>
             <div className="absolute inset-0 grid grid-cols-3 gap-4 p-6 text-white">
               {[
-                { r: "Americas", c: "12 cities" },
-                { r: "EMEA", c: "18 cities" },
-                { r: "APAC", c: "14 cities" },
-                { r: "India HQ", c: "Hyderabad" },
-                { r: "Uptime", c: "99.99%" },
+                { r: "Andhra Pradesh", c: "Local focus" },
+                { r: "Telangana", c: "Local focus" },
+                { r: "Vijayawada", c: "Business support" },
+                { r: "Hyderabad", c: "Business support" },
+                { r: "Consultations", c: "Online + phone" },
                 { r: "Support", c: "24×7×365" },
               ].map(x => (
                 <div key={x.r} className="rounded-lg border border-white/10 bg-white/5 p-3 text-xs backdrop-blur">

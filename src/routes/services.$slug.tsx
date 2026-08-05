@@ -10,6 +10,7 @@ import { SiteFooter } from "../components/site-footer";
 import { FaqAccordion } from "../components/faq-accordion";
 import { downloadServicePdf } from "../lib/service-pdf";
 import { submitWebsiteLead } from "../lib/crm.functions";
+import websiteSectionBackground from "../assets/website-development-card.png";
 
 export const Route = createFileRoute("/services/$slug")({
   loader: async ({ params }) => {
@@ -67,11 +68,11 @@ const serviceBackgrounds = {
   light: "/images/service-backgrounds/aurora-light.webp",
 };
 
-function SectionBackground({ src: _src, overlay = "dark" }: { src: string; overlay?: "dark" | "light" }) {
+function SectionBackground({ src: _src, overlay = "dark", transparentOnMobile = false }: { src: string; overlay?: "dark" | "light"; transparentOnMobile?: boolean }) {
   return (
     <div
       aria-hidden="true"
-      className={overlay === "dark" ? "pointer-events-none absolute inset-0 bg-[var(--brand-navy)]" : "pointer-events-none absolute inset-0 bg-slate-50"}
+      className={overlay === "dark" ? (transparentOnMobile ? "pointer-events-none absolute inset-0 bg-transparent md:bg-[var(--brand-navy)]" : "pointer-events-none absolute inset-0 bg-[var(--brand-navy)]") : (transparentOnMobile ? "pointer-events-none absolute inset-0 bg-transparent md:bg-slate-50" : "pointer-events-none absolute inset-0 bg-slate-50")}
     />
   );
 }
@@ -89,6 +90,7 @@ function ServiceDetail() {
   const { service, services, portfolio } = Route.useLoaderData() as { service: ManagedService; services: ManagedService[]; portfolio: WebsitePortfolioItem[] };
   const related = services.filter((s) => s.slug !== service.slug).slice(0, 3);
   const isMobileAppService = service.slug === "mobile-app-development";
+  const isWebsiteDevelopment = service.slug === "website-development";
   // The dedicated Website Development reference layout has been retired; all services share the established service-page design.
   const isReferenceStyle = false;
   const submitLead = useServerFn(submitWebsiteLead);
@@ -186,9 +188,11 @@ function ServiceDetail() {
       </>}
 
       {isReferenceStyle ? <WebsiteDevelopmentFlow service={service} portfolio={portfolio} /> : <>
+      <div className={`relative isolate ${isWebsiteDevelopment ? "bg-transparent" : ""}`}>
+        {isWebsiteDevelopment && <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-cover bg-center bg-fixed md:hidden" style={{ backgroundImage: `url(${websiteSectionBackground})` }} />}
       {/* Overview */}
       <section className="relative isolate overflow-hidden py-6 sm:py-8 md:py-10">
-        <SectionBackground src={serviceBackgrounds.light} overlay="light" />
+        <SectionBackground src={serviceBackgrounds.light} overlay="light" transparentOnMobile={isWebsiteDevelopment} />
         <div className="relative isolate mx-4 grid max-w-7xl gap-6 overflow-hidden rounded-[2rem_5rem_2rem_5rem] border border-white/60 bg-white/35 px-5 py-8 shadow-[0_20px_70px_rgba(16,24,40,0.08)] backdrop-blur-sm sm:mx-auto sm:my-4 sm:gap-10 sm:px-10 sm:py-12 md:grid-cols-3 lg:px-14">
           <PanelBackground src={serviceBackgrounds.light} overlay="light" />
           <div>
@@ -274,7 +278,7 @@ function ServiceDetail() {
       {/* Challenges */}
       {service.challenges?.length ? (
         <section className="relative isolate overflow-hidden py-6 sm:py-8 md:py-10">
-          <SectionBackground src={serviceBackgrounds.light} overlay="light" />
+          <SectionBackground src={serviceBackgrounds.light} overlay="light" transparentOnMobile={isWebsiteDevelopment} />
           <div className="relative isolate mx-4 max-w-7xl overflow-hidden rounded-[2rem_5rem_2rem_5rem] border border-slate-200 bg-white px-5 py-8 shadow-[0_20px_70px_rgba(16,24,40,0.08)] sm:mx-auto sm:px-8 sm:py-12 lg:px-12">
             <PanelBackground src={serviceBackgrounds.light} overlay="light" />
           <div className="max-w-2xl">
@@ -320,7 +324,7 @@ function ServiceDetail() {
 
       {/* Offerings */}
       <section className="relative isolate overflow-hidden py-6 sm:py-8 md:py-10">
-        <SectionBackground src={serviceBackgrounds.coral} overlay="light" />
+        <SectionBackground src={serviceBackgrounds.coral} overlay="light" transparentOnMobile={isWebsiteDevelopment} />
         <div className="relative isolate mx-4 max-w-7xl overflow-hidden rounded-[2rem_5rem_2rem_5rem] border border-slate-200 bg-white px-5 py-8 shadow-[0_20px_70px_rgba(16,24,40,0.08)] sm:mx-auto sm:px-8 sm:py-12 lg:px-12">
           <PanelBackground src={serviceBackgrounds.coral} overlay="light" />
         <div className="grid gap-7 sm:gap-10 md:grid-cols-2 md:items-start">
@@ -463,6 +467,7 @@ function ServiceDetail() {
         </div>
         </div>
       </section>
+      </div>
       </>}
 
       <SiteFooter />

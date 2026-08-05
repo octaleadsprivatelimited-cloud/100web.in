@@ -483,7 +483,6 @@ export const buildPackage = (name: string) => [
   { title: "Business Social Presence", desc: "Optimised Facebook, Instagram and Google Business pages that actually convert." },
   { title: "Facebook & Instagram Ads", desc: `Targeted paid campaigns tuned for ${name.toLowerCase()} buyer intent.` },
   { title: "Ad Creatives & Copywriting", desc: "Scroll-stopping creatives and copy tested weekly for CTR and cost per lead." },
-  { title: "Google, YouTube & Display Ads", desc: "Multi-channel ad mix so you reach customers wherever they research." },
 ];
 
 // AIDA-style strategy — attention, interest, desire, action.
@@ -500,7 +499,7 @@ export const buildApproach = () => [
   { title: "Build a Custom Audience", desc: "Lookalike, retargeting and interest-based audiences built from your real customer data." },
   { title: "Advanced Ad Technologies", desc: "Pixel tracking, conversion APIs and AI bidding for the lowest cost per qualified lead." },
   { title: "Dedicated Account Manager", desc: "One point of contact who knows your business, goals and numbers — reachable on WhatsApp." },
-  { title: "Weekly & Monthly Reporting", desc: "Clear dashboards with leads, cost, ROAS and next-step recommendations — no jargon." },
+  { title: "Monthly Reporting", desc: "Clear dashboards with leads, cost, ROAS and next-step recommendations — no jargon." },
 ];
 
 // Impact stats — deterministic-per-industry so numbers stay stable across renders.

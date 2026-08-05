@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Check, Play, Star, Sparkles, AlertCircle, Package, Target, Cog, TrendingUp, Award, Download } from "lucide-react";
+import { ArrowRight, Check, Play, Star, Sparkles, AlertCircle, Package, Target, Cog, TrendingUp, Award, Download, ChevronDown, LayoutPanelTop, ListChecks, BarChart3, ShieldCheck, Share2, Megaphone, PenTool } from "lucide-react";
 import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
 import { FaqAccordion } from "../components/faq-accordion";
@@ -22,7 +22,6 @@ import {
 import { getPublicIndustry, listPublicIndustries, type ManagedIndustry } from "../lib/content.functions";
 import { getIndustryPhotos } from "../lib/industry-photo-sets";
 import overviewBg from "../assets/overview-bg.webp";
-import aboutBg from "../assets/about-bg.jpg";
 import featuresBg from "../assets/features-bg.webp";
 import aidaBg from "../assets/aida-bg.webp";
 import reasonsBg from "../assets/reasons-bg.webp";
@@ -30,6 +29,8 @@ import packageBg from "../assets/package-bg.webp";
 import fitnessCenterOverviews from "../assets/fitness-center-overviews.png";
 import resultsOutcomes from "../assets/results-outcomes.png";
 import processBackground from "../assets/process-background.png";
+import aidaCardGradient from "../assets/aida-card-gradient.jpg";
+import industryMobileBackground from "../assets/industry-mobile-background-vertical.jpg";
 
 const youtubeId = (url?: string) => url?.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?v=|embed\/|shorts\/))([^?&/]+)/)?.[1] ?? null;
 
@@ -98,7 +99,9 @@ function IndustryDetail() {
         { src: fitnessCenterOverviews, tone: "", crop: "100% 50%", imageSize: "300% 100%" },
       ]
     : getIndustryPhotos(industry.category).map((image) => ({ ...image, tone: "" }));
+  const aboutBackground = featuresBg;
   const [overviewSlide, setOverviewSlide] = useState(0);
+  const [openPackage, setOpenPackage] = useState<number | null>(null);
   const overviewCarouselRef = useRef<HTMLDivElement>(null);
   const overviewSectionRef = useRef<HTMLElement>(null);
   const [overviewInView, setOverviewInView] = useState(false);
@@ -194,8 +197,15 @@ function IndustryDetail() {
         </div>
       </section>
 
+      <div className="relative isolate">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 bg-center bg-no-repeat md:hidden"
+          style={{ backgroundImage: `url(${industryMobileBackground})`, backgroundSize: "100% 100%" }}
+        />
+
       {/* Overview + images */}
-      <section ref={overviewSectionRef} className="relative bg-white">
+      <section ref={overviewSectionRef} className="relative bg-transparent md:bg-white">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 md:py-14 lg:px-8">
         <Counter n={1} tone="light" />
         <div
@@ -256,26 +266,29 @@ function IndustryDetail() {
           <div
             className="relative overflow-hidden rounded-2xl border border-brand-navy/15 p-5 sm:p-8"
             style={{
-              backgroundImage: `url(${aboutBg})`,
+              backgroundImage: `url(${aboutBackground})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
             }}
           >
-          <div aria-hidden className="absolute inset-0 bg-white/55 backdrop-blur-[2px]" />
+          <div aria-hidden className="absolute inset-0 bg-[#061a31]/50 backdrop-blur-[1px]" />
           <div className="relative">
           <div className="grid gap-6 md:grid-cols-2 md:items-start md:gap-10">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-brand-orange sm:text-sm">About the industry</p>
-              <h2 className="mt-2 text-2xl font-bold tracking-tight text-brand-navy sm:text-3xl md:text-4xl">The {industry.name} landscape today</h2>
-              <p className="mt-3 text-sm text-brand-navy/80 sm:mt-4 sm:text-base">{content.about}</p>
+              <h2 className="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl">The {industry.name} landscape today</h2>
+              <p className="mt-3 text-sm text-white/85 sm:mt-4 sm:text-base">{content.about}</p>
+              {/*
               <p className="mt-2 text-sm text-brand-navy/80 sm:mt-3 sm:text-base">We've worked with dozens of {industry.name.toLowerCase()} businesses — so we skip the learning curve and start with what actually moves the needle for you.</p>
+              */}
+              <p className="mt-2 text-sm text-white/85 sm:mt-3 sm:text-base">We've worked with dozens of {industry.name.toLowerCase()} businesses — so we skip the learning curve and start with what actually moves the needle for you.</p>
             </div>
             <div>
-              <h3 className="text-base font-semibold text-brand-navy sm:text-lg">Common challenges we solve</h3>
+              <h3 className="text-base font-semibold text-white sm:text-lg">Common challenges we solve</h3>
               <ul className="mt-3 space-y-2 sm:mt-4 sm:space-y-3">
-                {content.challenges.map((c) => (
-                  <li key={c} className="flex items-start gap-2.5 rounded-lg border border-white/60 bg-white/80 px-3 py-2.5 text-[13px] text-brand-navy backdrop-blur sm:gap-3 sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm">
-                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-brand-orange" />
+                {content.challenges.map((c, index) => (
+                  <li key={c} className={`flex items-start gap-2.5 rounded-lg border px-3 py-2.5 text-[13px] font-medium text-black shadow-sm sm:gap-3 sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm ${["border-orange-300 bg-orange-200", "border-sky-300 bg-sky-200", "border-emerald-300 bg-emerald-200", "border-violet-300 bg-violet-200"][index % 4]}`}>
+                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-black" />
                     <span>{c}</span>
                   </li>
                 ))}
@@ -288,7 +301,7 @@ function IndustryDetail() {
       </section>
 
       {/* Results */}
-      <section id="results" className="bg-muted/40 py-8 sm:py-12 md:py-14">
+      <section id="results" className="bg-transparent py-8 sm:py-12 md:bg-muted/40 md:py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Counter n={3} />
           <div className="rounded-2xl border bg-card/60 p-5 sm:p-8">
@@ -299,7 +312,7 @@ function IndustryDetail() {
           </div>
           <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-10 sm:gap-6 lg:grid-cols-4">
             {results.map((r, index) => (
-              <div key={r.label} className="rounded-xl border bg-card p-4 sm:rounded-2xl sm:p-6" style={{ boxShadow: "var(--shadow-card)" }}>
+              <div key={r.label} className="rounded-xl border border-blue-500 bg-[#0b5ea8] p-4 text-white sm:rounded-2xl sm:p-6" style={{ boxShadow: "var(--shadow-card)" }}>
                 <div className="flex items-center gap-3 sm:gap-4">
                   <div
                     role="img"
@@ -313,8 +326,8 @@ function IndustryDetail() {
                     }}
                   />
                   <div>
-                    <div className="text-2xl font-black text-brand-orange sm:text-4xl">{r.metric}</div>
-                    <p className="mt-1 text-xs text-muted-foreground sm:mt-2 sm:text-sm">{r.label}</p>
+                    <div className="text-2xl font-black text-white sm:text-4xl">{r.metric}</div>
+                    <p className="mt-1 text-xs text-white/80 sm:mt-2 sm:text-sm">{r.label}</p>
                   </div>
                 </div>
               </div>
@@ -348,8 +361,8 @@ function IndustryDetail() {
           </div>
           <ul className="space-y-2 sm:space-y-3">
             {content.features.map((f) => (
-              <li key={f} className="flex items-start gap-2.5 rounded-lg border bg-card px-3 py-3 text-[13px] font-medium sm:gap-3 sm:rounded-xl sm:px-4 sm:py-4 sm:text-sm">
-                <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-orange" /> {f}
+              <li key={f} className="flex items-start gap-2.5 rounded-lg border border-brand-orange bg-brand-orange px-3 py-3 text-[13px] font-semibold text-black sm:gap-3 sm:rounded-xl sm:px-4 sm:py-4 sm:text-sm">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-black" /> {f}
               </li>
             ))}
           </ul>
@@ -407,22 +420,28 @@ function IndustryDetail() {
           </p>
         </div>
         <div className="mt-6 grid grid-cols-1 gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
-          {pkg.map((item) => (
-            <div key={item.title} className="rounded-xl border bg-card p-4 sm:rounded-2xl sm:p-5" style={{ boxShadow: "var(--shadow-card)" }}>
-              <div className="grid h-10 w-10 place-items-center rounded-lg bg-brand-orange/10 text-brand-orange">
-                <Check className="h-5 w-5" />
-              </div>
-              <h3 className="mt-3 text-sm font-semibold sm:text-base">{item.title}</h3>
-              <p className="mt-1.5 text-xs text-muted-foreground sm:text-sm">{item.desc}</p>
-            </div>
-          ))}
+          {pkg.map((item, index) => {
+            const isOpen = openPackage === index;
+            const Icon = [LayoutPanelTop, ListChecks, BarChart3, ShieldCheck, Share2, Megaphone, PenTool][index % 7];
+            return (
+              <button key={item.title} type="button" onClick={() => setOpenPackage(isOpen ? null : index)} aria-expanded={isOpen} className="rounded-xl border border-white/15 bg-gradient-to-br from-black via-neutral-950 to-slate-900 p-3 text-left text-white transition hover:-translate-y-0.5 hover:border-brand-orange/70 sm:rounded-2xl sm:p-5" style={{ boxShadow: "var(--shadow-card)" }}>
+                <div className="flex items-center gap-3">
+                  <span className="grid h-10 w-10 place-items-center rounded-lg bg-brand-orange text-black" aria-hidden="true"><Icon className="h-5 w-5" /></span>
+                  <h3 className="min-w-0 flex-1 text-sm font-bold leading-snug sm:text-base">{item.title}</h3>
+                  <ChevronDown className={`h-4 w-4 shrink-0 transition ${isOpen ? "rotate-180" : ""}`} aria-hidden="true" />
+                </div>
+                <p className={`overflow-hidden text-xs text-white/75 transition-all sm:text-sm ${isOpen ? "mt-1.5 max-h-40 opacity-100" : "max-h-0 opacity-0"}`}>{item.desc}</p>
+                <span className="mt-2 hidden text-[10px] font-bold uppercase tracking-wider text-white/50 sm:block">{isOpen ? "Tap to close" : "Tap to view"}</span>
+              </button>
+            );
+          })}
         </div>
         </div>
         </div>
       </section>
 
       {/* AIDA Strategy */}
-      <section className="border-y bg-muted/30 py-8 sm:py-12 md:py-14">
+      <section className="border-y bg-transparent py-8 sm:py-12 md:bg-muted/30 md:py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Counter n={7} />
           <div
@@ -446,14 +465,18 @@ function IndustryDetail() {
               A time-tested marketing framework — Attention, Interest, Desire, Action — applied to every campaign we run.
             </p>
           </div>
-          <div className="mt-6 grid grid-cols-1 gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+          <div className="mt-6 grid grid-cols-2 gap-2 sm:mt-10 sm:gap-4 lg:grid-cols-4">
             {strategy.map((s, i) => (
-              <div key={i} className="relative overflow-hidden rounded-2xl border bg-card p-5 sm:p-6" style={{ boxShadow: "var(--shadow-card)" }}>
-                <div className="grid h-12 w-12 place-items-center rounded-xl bg-brand-navy text-xl font-black text-brand-orange">
+              <div key={i} className="relative overflow-hidden rounded-xl border border-white/20 p-3 text-white sm:rounded-2xl sm:p-5" style={{ boxShadow: "var(--shadow-card)" }}>
+                <div aria-hidden className="absolute inset-0 bg-cover" style={{ backgroundImage: `url(${aidaCardGradient})`, backgroundPosition: `${i * 33}% center` }} />
+                <div aria-hidden className="absolute inset-0 bg-black/55" />
+                <div className="relative z-10">
+                <div className="grid h-8 w-8 place-items-center rounded-lg bg-white text-sm font-black text-brand-navy sm:h-12 sm:w-12 sm:rounded-xl sm:text-xl">
                   {s.key}
                 </div>
-                <h3 className="mt-3 text-base font-semibold sm:text-lg">{s.title}</h3>
-                <p className="mt-1.5 text-xs text-muted-foreground sm:text-sm">{s.desc}</p>
+                <h3 className="mt-2 text-xs font-bold leading-tight sm:mt-3 sm:text-lg">{s.title}</h3>
+                <p className="mt-1.5 hidden text-xs text-white/85 sm:block sm:text-sm">{s.desc}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -643,7 +666,7 @@ function IndustryDetail() {
 
       {/* Related in same category */}
       {related.length > 0 && (
-        <section className="bg-muted/40 py-10 md:py-14">
+        <section className="bg-transparent py-10 md:bg-muted/40 md:py-14">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">More in {industry.category}</h2>
             <div className="mt-6 flex flex-wrap gap-2">
@@ -661,6 +684,8 @@ function IndustryDetail() {
           </div>
         </section>
       )}
+
+      </div>
 
       <SiteFooter />
     </div>
