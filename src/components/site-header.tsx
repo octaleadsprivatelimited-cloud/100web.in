@@ -1,5 +1,5 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Menu, X, Search, ChevronDown, Globe, Smartphone, Users, Building2, Stethoscope, GraduationCap, Car, Utensils, Dumbbell, Scissors, ShoppingCart, Pill, Hotel, Home, BriefcaseBusiness, Phone, type LucideIcon } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { services } from "../lib/services-data";
@@ -81,6 +81,7 @@ export function SiteHeader() {
   const [industriesOpen, setIndustriesOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [mobileIndustriesOpen, setMobileIndustriesOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const servicesWrapRef = useRef<HTMLDivElement>(null);
   const servicesTriggerRef = useRef<HTMLAnchorElement>(null);
@@ -101,6 +102,19 @@ export function SiteHeader() {
     const name = industry?.name || slug.replaceAll("-", " ");
     return `Hello 100 Web Technologies, I need digital growth support for my ${name} business. Please share the best solution and next steps.`;
   })();
+  const searchResults = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return [];
+    const serviceResults = services
+      .filter((service) => `${service.badge} ${service.tagline}`.toLowerCase().includes(query))
+      .slice(0, 4)
+      .map((service) => ({ kind: "Service", label: service.badge, detail: service.tagline, to: "/services/$slug" as const, slug: service.slug }));
+    const industryResults = industries
+      .filter((industry) => `${industry.name} ${industry.category}`.toLowerCase().includes(query))
+      .slice(0, 4)
+      .map((industry) => ({ kind: "Industry", label: industry.name, detail: industry.category, to: "/industries/$slug" as const, slug: industry.slug }));
+    return [...serviceResults, ...industryResults].slice(0, 6);
+  }, [searchQuery]);
 
   const openServices = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -162,7 +176,7 @@ export function SiteHeader() {
   }, [industriesOpen]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white" role="banner">
+    <header className="sticky top-0 z-50 relative border-b border-slate-200 bg-white" role="banner">
       <div className="hidden bg-[#232f3e] text-white lg:block"><div className="mx-auto flex h-10 max-w-7xl items-center justify-end gap-7 px-6 text-xs font-semibold lg:px-8"><span className="inline-flex items-center gap-1.5"><Globe className="h-3.5 w-3.5" /> English <ChevronDown className="h-3 w-3" /></span><Link to="/contact" className="hover:text-brand-orange">Contact us</Link><Link to="/services" className="hover:text-brand-orange">Services</Link><Link to="/blog" className="hover:text-brand-orange">Resources</Link><Link to="/auth" className="inline-flex items-center gap-1 hover:text-brand-orange">My account <ChevronDown className="h-3 w-3" /></Link></div></div>
       <div data-main-header className="mx-auto flex max-w-7xl items-center justify-between gap-4 bg-white px-4 py-4 text-brand-navy sm:px-6 lg:px-8">
         <Link to="/" className="flex shrink-0 items-center" aria-label="100 Web Technologies — Home">
@@ -176,7 +190,7 @@ export function SiteHeader() {
                 <div
                   key={n.label}
                   ref={servicesWrapRef}
-                  className="relative"
+                  className="static"
                   onMouseEnter={openServices}
                   onMouseLeave={scheduleCloseServices}
                 >
@@ -210,7 +224,7 @@ export function SiteHeader() {
                     role="menu"
                     aria-label="Solutions"
                     aria-hidden={!servicesOpen}
-                    className={`fixed left-1/2 top-[4.75rem] z-50 w-[min(960px,calc(100vw-2rem))] max-h-[calc(100vh-5.5rem)] -translate-x-1/2 overflow-x-hidden overflow-y-auto rounded-b-xl border border-slate-200 bg-white text-foreground shadow-[0_20px_50px_rgba(15,23,42,0.2)] transition-all duration-200 ease-out ${servicesOpen ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none -translate-y-1 opacity-0"}`}
+                    className={`absolute left-1/2 top-full z-50 w-[min(960px,calc(100vw-2rem))] max-h-[calc(100vh-7rem)] -translate-x-1/2 overflow-x-hidden overflow-y-auto rounded-b-xl border border-t-0 border-slate-200 bg-white text-foreground shadow-[0_20px_50px_rgba(15,23,42,0.2)] transition-all duration-200 ease-out ${servicesOpen ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none -translate-y-1 opacity-0"}`}
                     onMouseEnter={openServices}
                     onMouseLeave={scheduleCloseServices}
                   >
@@ -286,7 +300,7 @@ export function SiteHeader() {
                 <div
                   key={n.label}
                   ref={industriesWrapRef}
-                  className="relative"
+                  className="static"
                   onMouseEnter={openIndustries}
                   onMouseLeave={scheduleCloseIndustries}
                 >
@@ -320,7 +334,7 @@ export function SiteHeader() {
                     role="menu"
                     aria-label="Industries"
                     aria-hidden={!industriesOpen}
-                    className={`fixed left-1/2 top-[4.75rem] z-50 w-[min(760px,calc(100vw-2rem))] max-h-[calc(100vh-5.5rem)] -translate-x-1/2 overflow-x-hidden overflow-y-auto rounded-b-xl border border-slate-200 bg-white text-foreground shadow-[0_20px_50px_rgba(15,23,42,0.2)] transition-all duration-200 ease-out ${industriesOpen ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none -translate-y-1 opacity-0"}`}
+                    className={`absolute left-1/2 top-full z-50 w-[min(760px,calc(100vw-2rem))] max-h-[calc(100vh-7rem)] -translate-x-1/2 overflow-x-hidden overflow-y-auto rounded-b-xl border border-t-0 border-slate-200 bg-white text-foreground shadow-[0_20px_50px_rgba(15,23,42,0.2)] transition-all duration-200 ease-out ${industriesOpen ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none -translate-y-1 opacity-0"}`}
                     onMouseEnter={openIndustries}
                     onMouseLeave={scheduleCloseIndustries}
                   >
@@ -381,12 +395,35 @@ export function SiteHeader() {
 
         <div className="hidden items-center gap-3 lg:flex">
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-navy/55" />
-            <input
-              type="text"
-              placeholder="Search"
-              className="h-9 w-48 rounded-md border border-slate-300 bg-white pl-9 pr-3 text-sm text-brand-navy placeholder:text-brand-navy/50 focus:border-brand-orange focus:outline-none lg:w-56"
-            />
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                const query = searchQuery.trim();
+                if (query) navigate({ to: "/blog", search: { query } });
+              }}
+            >
+              <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-navy/55" />
+              <input
+                type="search"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                onKeyDown={(event) => { if (event.key === "Escape") setSearchQuery(""); }}
+                placeholder="Search services, industries…"
+                aria-label="Search services, industries and articles"
+                className="h-9 w-48 rounded-md border border-slate-300 bg-white pl-9 pr-3 text-sm text-brand-navy placeholder:text-brand-navy/50 focus:border-brand-orange focus:outline-none lg:w-56"
+              />
+            </form>
+            {searchQuery.trim() && (
+              <div className="absolute right-0 top-[calc(100%+0.5rem)] z-[70] w-80 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-xl">
+                {searchResults.length ? searchResults.map((result) => (
+                  <Link key={`${result.kind}-${result.slug}`} to={result.to} params={{ slug: result.slug }} onClick={() => setSearchQuery("")} className="block px-4 py-3 transition hover:bg-slate-50">
+                    <span className="block text-[10px] font-bold uppercase tracking-widest text-brand-orange">{result.kind}</span>
+                    <span className="mt-0.5 block text-sm font-semibold text-brand-navy">{result.label}</span>
+                    <span className="mt-0.5 block truncate text-xs text-muted-foreground">{result.detail}</span>
+                  </Link>
+                )) : <p className="px-4 py-3 text-sm text-muted-foreground">No service or industry matches. Press Enter to search articles.</p>}
+              </div>
+            )}
           </div>
           <Link to="/auth" className="text-sm font-medium text-brand-navy transition hover:text-brand-orange">
             Sign in

@@ -31,6 +31,10 @@ import claudeLogo from "../assets/partners/claude.svg";
 import vercelLogo from "../assets/partners/vercel.svg";
 import andhraTelanganaMap from "../assets/andhra-telangana-map.png";
 import industryHighlights from "../assets/industry-highlights.png";
+import websiteDevelopmentCard from "../assets/website-development-card.png";
+import mobileAppGradientCard from "../assets/mobile-app-gradient-card.png";
+import digitalMarketingGradientCard from "../assets/digital-marketing-gradient-card.png";
+import seoGradientCard from "../assets/seo-gradient-card.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -98,6 +102,20 @@ const homepageServices = [...services].sort((first, second) => {
   const secondPosition = homepageServiceOrder.indexOf(second.slug);
   return (firstPosition === -1 ? homepageServiceOrder.length : firstPosition) - (secondPosition === -1 ? homepageServiceOrder.length : secondPosition);
 });
+
+const primaryServiceCardDetails: Record<string, { eyebrow: string; description: string; overlay: string }> = {
+  "website-development": { eyebrow: "Digital experiences", description: "Fast, conversion-ready websites designed to grow your business.", overlay: "from-black/80 via-[#30133f]/35 to-transparent" },
+  "mobile-app-development": { eyebrow: "Mobile products", description: "iOS and Android apps built for seamless customer experiences.", overlay: "from-[#071c3d]/90 via-[#0d6f9c]/40 to-transparent" },
+  "digital-marketing": { eyebrow: "Growth marketing", description: "Campaigns that turn attention into qualified business opportunities.", overlay: "from-[#3f1020]/90 via-[#d1435c]/35 to-transparent" },
+  seo: { eyebrow: "Search visibility", description: "SEO strategies that help the right customers find your business.", overlay: "from-[#08373f]/90 via-[#159577]/35 to-transparent" },
+};
+
+const primaryServiceCardImages: Record<string, string> = {
+  "website-development": websiteDevelopmentCard,
+  "mobile-app-development": mobileAppGradientCard,
+  "digital-marketing": digitalMarketingGradientCard,
+  seo: seoGradientCard,
+};
 
 const localSeoFaqs = [
   { question: "What services does 100 Web Technologies provide in Andhra Pradesh and Telangana?", answer: "We provide website development, mobile app development, SEO, digital marketing, e-commerce and custom software services for businesses across Andhra Pradesh and Telangana." },
@@ -232,34 +250,48 @@ function Index() {
           </p>
         </div>
         <div className="grid min-h-0 flex-1 grid-cols-2 grid-rows-2 gap-2.5 sm:gap-3 md:mt-10 md:flex-none md:grid-rows-none md:gap-5 lg:grid-cols-3">
-          {homepageServices.map((card) => (
+          {homepageServices.map((card) => {
+            const primaryService = primaryServiceCardDetails[card.slug];
+            return (
             <Link
               key={card.slug}
               to="/services/$slug"
               params={{ slug: card.slug }}
-              className={`group flex min-h-0 flex-col overflow-hidden rounded-xl border border-slate-200/80 bg-[#f3f4f8] transition duration-300 hover:-translate-y-0.5 hover:border-brand-orange/40 hover:shadow-lg ${homepageServiceOrder.includes(card.slug) ? "" : "hidden md:block"}`}
+              className={`group relative flex min-h-0 flex-col overflow-hidden rounded-xl border border-slate-200/80 bg-[#f3f4f8] transition duration-300 hover:-translate-y-0.5 hover:border-brand-orange/40 hover:shadow-lg ${homepageServiceOrder.includes(card.slug) ? "" : "hidden md:block"}`}
             >
-              <div className="relative h-[44%] shrink-0 overflow-hidden bg-slate-100 md:h-auto md:aspect-[16/10]">
+              <div className={`relative shrink-0 overflow-hidden bg-slate-100 ${primaryService ? "absolute inset-0 h-full" : "h-[44%] md:h-auto md:aspect-[16/10]"}`}>
                 <img
-                  src={card.image}
-                  alt={card.title}
+                  src={primaryServiceCardImages[card.slug] ?? card.image}
+                  alt={`${card.badge} gradient artwork`}
                   className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                   loading="lazy"
                   width={1024}
                   height={576}
                 />
               </div>
-              <div className="flex flex-1 flex-col justify-between p-3 sm:p-6">
-                <div>
-                  <h3 className="text-sm font-semibold leading-snug text-foreground sm:text-base">{card.badge}</h3>
-                  <p className="mt-1 text-[11px] leading-[1.45] text-slate-600 sm:mt-2 sm:text-xs">{card.desc}</p>
-                </div>
-                <div className="mt-2.5 inline-flex items-center gap-2 text-sm font-semibold text-[var(--brand-navy)] group-hover:text-[var(--brand-orange)] sm:mt-6">
-                  <ArrowRight className="h-4 w-4" />
-                </div>
+              {primaryService && <div aria-hidden className={`absolute inset-0 bg-gradient-to-t ${primaryService.overlay}`} />}
+              <div className={`flex flex-1 flex-col justify-between p-3 sm:p-6 ${primaryService ? "absolute inset-x-0 bottom-0 z-10" : ""}`}>
+                {primaryService ? (
+                  <div className="max-w-[14rem] text-white md:max-w-sm" style={{ fontFamily: "'Segoe UI', Arial, sans-serif" }}>
+                    <p className="inline-flex rounded-full border border-white/30 bg-black/20 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.16em] text-white/95 backdrop-blur-sm md:text-[10px]">{primaryService.eyebrow}</p>
+                    <h3 className="mt-2 max-w-[12.5rem] text-[1.45rem] font-black leading-[0.94] tracking-[-0.045em] text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.95)] md:mt-3 md:max-w-xs md:text-[2.25rem]" style={{ fontFamily: "'Segoe UI', Arial, sans-serif" }}>{card.badge}</h3>
+                    <span aria-hidden className="mt-2 block h-1 w-10 rounded-full bg-brand-orange shadow-[0_2px_10px_rgba(249,115,22,0.7)] md:mt-3 md:w-14" />
+                    <p className="mt-2 max-w-[12.5rem] text-[11px] font-normal leading-[1.45] text-white md:max-w-xs md:text-sm">{primaryService.description}</p>
+                    <span className="mt-3 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-[#10213a] shadow-[0_8px_20px_rgba(0,0,0,0.25)] transition duration-200 group-hover:-translate-y-0.5 group-hover:bg-brand-orange group-hover:text-white md:mt-5 md:px-4 md:py-2 md:text-sm">View more <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5 md:h-4 md:w-4" /></span>
+                  </div>
+                ) : (
+                  <>
+                    <div>
+                      <h3 className="text-sm font-semibold leading-snug text-foreground sm:text-base">{card.badge}</h3>
+                      <p className="mt-1 text-[11px] leading-[1.45] text-slate-600 sm:mt-2 sm:text-xs">{card.desc}</p>
+                    </div>
+                    <div className="mt-2.5 inline-flex items-center gap-2 text-sm font-semibold text-[var(--brand-navy)] group-hover:text-[var(--brand-orange)] sm:mt-6"><ArrowRight className="h-4 w-4" /></div>
+                  </>
+                )}
               </div>
             </Link>
-          ))}
+            );
+          })}
         </div>
       </section>
 

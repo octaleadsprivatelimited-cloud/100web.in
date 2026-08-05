@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { ExternalLink, FileText, Loader2, Pencil, Search, X } from "lucide-react";
 import { toast } from "sonner";
 import { AdminShell } from "./admin-shell";
+import { ImageUpload } from "./image-upload";
 import { listManagedPages, saveManagedPage } from "@/lib/admin.functions";
 
 type Kind = "service" | "industry";
@@ -107,12 +108,12 @@ function PageEditor({ kind, initial, saving, onClose, onSave }: { kind: Kind; in
             <Field label="Card description"><textarea rows={2} value={(item.desc ?? "") as string} onChange={(e) => set("desc", e.target.value)} className="managed-input" /></Field>
             <Field label="Hero tagline"><input value={(item.tagline ?? "") as string} onChange={(e) => set("tagline", e.target.value)} className="managed-input" /></Field>
             <Field label="Page overview"><textarea rows={5} value={(item.overview ?? "") as string} onChange={(e) => set("overview", e.target.value)} className="managed-input" /></Field>
-            <Field label="Hero image URL"><input value={(item.image ?? "") as string} onChange={(e) => set("image", e.target.value)} className="managed-input" /></Field>
+            <Field label="Hero image"><ImageUpload value={(item.image ?? "") as string} onChange={(value) => set("image", value)} purpose="general" /></Field>
             <Field label="YouTube hero video (optional)"><input type="url" value={(item.hero_video_url ?? "") as string} onChange={(e) => set("hero_video_url", e.target.value)} placeholder="https://www.youtube.com/watch?v=..." className="managed-input" /><span className="mt-1 block text-[10px] text-muted-foreground">For Website Development, this replaces the hero image with an embedded video.</span></Field>
           </> : <>
             <Field label="Hero heading (optional)"><input value={(item.hero_title ?? "") as string} onChange={(e) => set("hero_title", e.target.value)} placeholder={`Grow your ${item.name} business online`} className="managed-input" /></Field>
             <Field label="Page description"><textarea rows={5} value={(item.description ?? "") as string} onChange={(e) => set("description", e.target.value)} className="managed-input" /></Field>
-            <Field label="Hero image URL (optional)"><input value={(item.image_url ?? "") as string} onChange={(e) => set("image_url", e.target.value)} className="managed-input" /></Field>
+            <Field label="Hero image"><ImageUpload value={(item.image_url ?? "") as string} onChange={(value) => set("image_url", value)} purpose="general" /></Field>
             <Field label="YouTube industry video (optional)"><input type="url" value={(item.hero_video_url ?? "") as string} onChange={(e) => set("hero_video_url", e.target.value)} placeholder="https://www.youtube.com/watch?v=..." className="managed-input" /><span className="mt-1 block text-[10px] text-muted-foreground">Paste one YouTube video for this industry. It appears on the public industry page.</span></Field>
           </>}
           <Field label="PDF link"><div className="relative"><FileText className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" /><input type="url" value={item.pdf_url ?? ""} onChange={(e) => set("pdf_url", e.target.value)} placeholder="https://example.com/brochure.pdf" className="managed-input pl-9" /></div></Field>

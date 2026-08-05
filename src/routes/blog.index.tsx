@@ -6,6 +6,9 @@ import { SiteFooter } from "@/components/site-footer";
 import { listPublishedBlogPosts, type PublicBlogPost } from "@/lib/blog.functions";
 
 export const Route = createFileRoute("/blog/")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    query: typeof search.query === "string" ? search.query : "",
+  }),
   loader: () => listPublishedBlogPosts(),
   head: () => ({
     meta: [
@@ -24,8 +27,9 @@ const PAGE_SIZE = 18;
 
 function BlogIndex() {
   const posts = Route.useLoaderData() as PublicBlogPost[];
+  const { query: initialQuery } = Route.useSearch();
   const featured = posts[0];
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const [page, setPage] = useState(1);
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();

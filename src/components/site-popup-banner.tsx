@@ -76,7 +76,7 @@ export function SitePopupBanner() {
           <img
             src={banner.image_url}
             alt=""
-            className={`${isImageFocus ? "aspect-[2/1]" : isMinimal ? "hidden" : "aspect-[16/9]"} w-full object-cover`}
+            className={`${isMinimal ? "hidden" : "block h-auto max-h-[min(42svh,26rem)] w-full bg-slate-100 object-contain object-center"}`}
           />
         )}
         <button

@@ -300,18 +300,23 @@ function IndustryDetail() {
           <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-10 sm:gap-6 lg:grid-cols-4">
             {results.map((r, index) => (
               <div key={r.label} className="rounded-xl border bg-card p-4 sm:rounded-2xl sm:p-6" style={{ boxShadow: "var(--shadow-card)" }}>
-                <div
-                  role="img"
-                  aria-label={`${r.label} visual`}
-                  className="mb-3 aspect-[16/7] overflow-hidden rounded-lg bg-slate-100 sm:mb-4"
-                  style={{
-                    backgroundImage: `url(${resultsOutcomes})`,
-                    backgroundSize: "400% 100%",
-                    backgroundPosition: `${index === 0 ? "0%" : index === 1 ? "33.333%" : index === 2 ? "66.667%" : "100%"} 50%`,
-                  }}
-                />
-                <div className="text-2xl font-black text-brand-orange sm:text-4xl">{r.metric}</div>
-                <p className="mt-2 text-xs text-muted-foreground sm:mt-3 sm:text-sm">{r.label}</p>
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div
+                    role="img"
+                    aria-label={`${r.label} visual`}
+                    className="h-20 w-[3.3125rem] shrink-0 overflow-hidden rounded-lg bg-slate-100 sm:h-24 sm:w-16"
+                    style={{
+                      backgroundImage: `url(${resultsOutcomes})`,
+                      backgroundSize: "400% 100%",
+                      backgroundPosition: `${index === 0 ? "0%" : index === 1 ? "33.333%" : index === 2 ? "66.667%" : "100%"} 50%`,
+                      backgroundRepeat: "no-repeat",
+                    }}
+                  />
+                  <div>
+                    <div className="text-2xl font-black text-brand-orange sm:text-4xl">{r.metric}</div>
+                    <p className="mt-1 text-xs text-muted-foreground sm:mt-2 sm:text-sm">{r.label}</p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
