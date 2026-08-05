@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowRight, Check, ArrowLeft, Download, AlertTriangle, CalendarCheck, ShieldCheck, Smartphone, Loader2 } from "lucide-react";
+import { ArrowRight, Check, ArrowLeft, Download, AlertTriangle, CalendarCheck, ShieldCheck, Smartphone, Loader2, Code2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import type { Service } from "../lib/services-data";
@@ -67,6 +67,23 @@ const serviceBackgrounds = {
   coral: "/images/service-backgrounds/aurora-coral.webp",
   light: "/images/service-backgrounds/aurora-light.webp",
 };
+
+const technologyLogos: Record<string, string> = {
+  "AWS": "amazonaws", "Azure": "microsoftazure", "Google Cloud": "googlecloud", "Terraform": "terraform", "Kubernetes": "kubernetes", "Docker": "docker", "Ansible": "ansible", "Datadog": "datadog", "CloudWatch": "amazoncloudwatch",
+  "OpenAI": "openai", "Anthropic": "anthropic", "Llama": "meta", "LangChain": "langchain", "LlamaIndex": "llamaindex", "Pinecone": "pinecone", "PyTorch": "pytorch", "TensorFlow": "tensorflow", "MLflow": "mlflow", "SageMaker": "amazonaws",
+  "Snowflake": "snowflake", "BigQuery": "googlebigquery", "Databricks": "databricks", "dbt": "dbt", "Airflow": "apacheairflow", "Kafka": "apachekafka", "Fivetran": "fivetran", "Airbyte": "airbyte", "Looker": "looker", "Tableau": "tableau",
+  "React": "react", "Next.js": "nextdotjs", "TypeScript": "typescript", "Tailwind": "tailwindcss", "Sanity": "sanity", "Contentful": "contentful", "Shopify": "shopify", "Vercel": "vercel", "Cloudflare": "cloudflare",
+  "React Native": "react", "Flutter": "flutter", "Swift": "swift", "Kotlin": "kotlin", "Expo": "expo", "PostgreSQL": "postgresql", "Sentry": "sentry", "AppsFlyer": "appsflyer",
+  "Salesforce": "salesforce", "HubSpot": "hubspot", "Zoho": "zoho", "Pipedrive": "pipedrive", "Zapier": "zapier", "Segment": "segment", "Twilio": "twilio", "Slack": "slack", "Outreach": "outreach",
+  "Ahrefs": "ahrefs", "Semrush": "semrush", "Google Search Console": "googlesearchconsole", "GA4": "googleanalytics", "Screaming Frog": "screamingfrog", "Surfer": "surfer", "Clearscope": "clearscope", "Looker Studio": "looker",
+  "Google Ads": "googleads", "Meta Ads": "meta", "LinkedIn Ads": "linkedin", "TikTok Ads": "tiktok", "Klaviyo": "klaviyo", "Hotjar": "hotjar",
+  "GitHub Actions": "githubactions", "ArgoCD": "argo", "Helm": "helm", "Grafana": "grafana", "Prometheus": "prometheus", "PagerDuty": "pagerduty",
+};
+
+function TechnologyLogo({ name }: { name: string }) {
+  const logo = technologyLogos[name];
+  return logo ? <img src={`https://cdn.simpleicons.org/${logo}`} alt="" className="h-4 w-4 shrink-0 object-contain" loading="lazy" /> : <Code2 className="h-4 w-4 shrink-0 text-[var(--brand-orange)]" aria-hidden="true" />;
+}
 
 function SectionBackground({ src: _src, overlay = "dark", transparentOnMobile = false }: { src: string; overlay?: "dark" | "light"; transparentOnMobile?: boolean }) {
   return (
@@ -277,7 +294,7 @@ function ServiceDetail() {
 
       {/* Challenges */}
       {service.challenges?.length ? (
-        <section className="relative isolate overflow-hidden py-6 sm:py-8 md:py-10">
+        <section className="relative isolate hidden overflow-hidden py-6 sm:py-8 md:block md:py-10">
           <SectionBackground src={serviceBackgrounds.light} overlay="light" transparentOnMobile={isWebsiteDevelopment} />
           <div className="relative isolate mx-4 max-w-7xl overflow-hidden rounded-[2rem_5rem_2rem_5rem] border border-slate-200 bg-white px-5 py-8 shadow-[0_20px_70px_rgba(16,24,40,0.08)] sm:mx-auto sm:px-8 sm:py-12 lg:px-12">
             <PanelBackground src={serviceBackgrounds.light} overlay="light" />
@@ -358,9 +375,10 @@ function ServiceDetail() {
         {service.techStack?.length ? (
           <div className="mt-10 rounded-2xl border border-white/75 bg-white/80 p-5 shadow-[0_18px_45px_rgba(16,24,40,0.08)] backdrop-blur-sm sm:mt-14 sm:p-8">
             <p className="text-xs font-semibold uppercase tracking-wider text-[var(--brand-navy)]/60">Technology stack</p>
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="-mx-1 mt-4 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-1 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
               {service.techStack.map((t) => (
-                <span key={t} className="rounded-md border bg-background px-3 py-1.5 text-xs font-semibold text-[var(--brand-navy)]">
+                <span key={t} className="inline-flex shrink-0 snap-start items-center gap-2 rounded-lg border border-slate-200 bg-white/90 px-3 py-2 text-xs font-semibold text-[var(--brand-navy)] shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--brand-orange)]/70">
+                  <TechnologyLogo name={t} />
                   {t}
                 </span>
               ))}

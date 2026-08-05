@@ -30,7 +30,6 @@ import fitnessCenterOverviews from "../assets/fitness-center-overviews.png";
 import resultsOutcomes from "../assets/results-outcomes.png";
 import processBackground from "../assets/process-background.png";
 import aidaCardGradient from "../assets/aida-card-gradient.jpg";
-import industryMobileBackground from "../assets/industry-mobile-background-vertical.jpg";
 
 const youtubeId = (url?: string) => url?.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?v=|embed\/|shorts\/))([^?&/]+)/)?.[1] ?? null;
 
@@ -197,15 +196,8 @@ function IndustryDetail() {
         </div>
       </section>
 
-      <div className="relative isolate">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-10 bg-center bg-no-repeat md:hidden"
-          style={{ backgroundImage: `url(${industryMobileBackground})`, backgroundSize: "100% 100%" }}
-        />
-
       {/* Overview + images */}
-      <section ref={overviewSectionRef} className="relative bg-transparent md:bg-white">
+      <section ref={overviewSectionRef} className="relative bg-white">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 md:py-14 lg:px-8">
         <Counter n={1} tone="light" />
         <div
@@ -301,7 +293,7 @@ function IndustryDetail() {
       </section>
 
       {/* Results */}
-      <section id="results" className="bg-transparent py-8 sm:py-12 md:bg-muted/40 md:py-14">
+      <section id="results" className="bg-muted/40 py-8 sm:py-12 md:py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Counter n={3} />
           <div className="rounded-2xl border bg-card/60 p-5 sm:p-8">
@@ -441,7 +433,7 @@ function IndustryDetail() {
       </section>
 
       {/* AIDA Strategy */}
-      <section className="border-y bg-transparent py-8 sm:py-12 md:bg-muted/30 md:py-14">
+      <section className="border-y bg-muted/30 py-8 sm:py-12 md:py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Counter n={7} />
           <div
@@ -666,7 +658,7 @@ function IndustryDetail() {
 
       {/* Related in same category */}
       {related.length > 0 && (
-        <section className="bg-transparent py-10 md:bg-muted/40 md:py-14">
+        <section className="bg-muted/40 py-10 md:py-14">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">More in {industry.category}</h2>
             <div className="mt-6 flex flex-wrap gap-2">
@@ -684,8 +676,6 @@ function IndustryDetail() {
           </div>
         </section>
       )}
-
-      </div>
 
       <SiteFooter />
     </div>
