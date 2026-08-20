@@ -1,11 +1,11 @@
 import type { IndustryCategory } from "./industries-data";
-import set01 from "../assets/industry-photo-set-01.png";
-import set02 from "../assets/industry-photo-set-02.png";
-import set03 from "../assets/industry-photo-set-03.png";
-import set04 from "../assets/industry-photo-set-04.png";
-import set05 from "../assets/industry-photo-set-05.png";
-import set06 from "../assets/industry-photo-set-06.png";
-import set07 from "../assets/industry-photo-set-07.png";
+import set01 from "../assets/industry-photo-set-01.webp";
+import set02 from "../assets/industry-photo-set-02.webp";
+import set03 from "../assets/industry-photo-set-03.webp";
+import set04 from "../assets/industry-photo-set-04.webp";
+import set05 from "../assets/industry-photo-set-05.webp";
+import set06 from "../assets/industry-photo-set-06.webp";
+import set07 from "../assets/industry-photo-set-07.webp";
 
 export type IndustryPhoto = { src: string; crop: string; imageSize: string };
 

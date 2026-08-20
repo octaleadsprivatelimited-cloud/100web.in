@@ -4,6 +4,7 @@ import { ArrowRight, Clock, Search } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { listPublishedBlogPosts, type PublicBlogPost } from "@/lib/blog.functions";
+import { getBlogEditorialAuthor } from "@/lib/blog-authors";
 
 export const Route = createFileRoute("/blog/")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -105,6 +106,7 @@ function BlogIndex() {
 }
 
 function ArticleCard({ post }: { post: PublicBlogPost }) {
+  const author = getBlogEditorialAuthor(post.slug);
   return <Link to="/blog/$slug" params={{ slug: post.slug }} className="group flex h-full flex-col overflow-hidden rounded-2xl border bg-card transition hover:-translate-y-0.5 hover:shadow-lg">
     <div className="overflow-hidden bg-brand-navy">
       <img src={post.cover_image || `/api/blog-cover/${post.slug}`} alt={`Illustrated cover for ${post.title}`} className="aspect-[16/9] w-full object-cover transition duration-500 group-hover:scale-[1.025]" loading="lazy" />
@@ -113,6 +115,7 @@ function ArticleCard({ post }: { post: PublicBlogPost }) {
       <div className="flex items-center justify-between gap-3 text-[11px] font-semibold uppercase tracking-wider text-brand-orange"><span>{post.category}</span><span className="inline-flex items-center gap-1 normal-case tracking-normal text-muted-foreground"><Clock className="h-3 w-3" />{post.reading_minutes} min</span></div>
       <h2 className="mt-3 text-lg font-bold leading-snug text-brand-navy group-hover:text-brand-orange">{post.title}</h2>
       <p className="mt-3 line-clamp-3 text-sm leading-6 text-muted-foreground">{post.excerpt}</p>
+      <p className="mt-4 text-xs font-semibold text-brand-navy/75">By {author.name}</p>
       <span className="mt-auto inline-flex items-center gap-1 pt-5 text-sm font-semibold text-brand-navy">Read article <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></span>
     </div>
   </Link>;

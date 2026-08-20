@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, BookOpen, Clock } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { getPublishedBlogPost, type PublicBlogPost } from "@/lib/blog.functions";
+import { getBlogEditorialAuthor } from "@/lib/blog-authors";
 
 const SITE_ORIGIN = "https://100web.in";
 
@@ -15,13 +16,14 @@ export const Route = createFileRoute("/blog/$slug")({
   head: ({ loaderData }) => {
     if (!loaderData) return { meta: [{ title: "Article not found | 100 Web Technologies" }, { name: "robots", content: "noindex" }] };
     const post = loaderData.post;
+    const author = getBlogEditorialAuthor(post.slug);
     const description = post.meta_description || post.excerpt || "";
     return {
       meta: [
         { title: `${post.title} | 100 Web Technologies` },
         { name: "description", content: description },
         { name: "keywords", content: post.keywords?.join(", ") || "" },
-        { name: "author", content: post.author_name || "100 Web Technologies Editorial Team" },
+        { name: "author", content: author.name },
         { property: "og:title", content: post.title },
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
@@ -36,6 +38,7 @@ export const Route = createFileRoute("/blog/$slug")({
 
 function BlogArticle() {
   const { post, related } = Route.useLoaderData() as { post: PublicBlogPost; related: PublicBlogPost[] };
+  const author = getBlogEditorialAuthor(post.slug);
   const headings = extractHeadings(post.content || "");
   const articleSchema = {
     "@context": "https://schema.org",
@@ -44,7 +47,7 @@ function BlogArticle() {
     description: post.meta_description || post.excerpt,
     datePublished: post.published_at,
     dateModified: post.updated_at,
-    author: { "@type": "Organization", name: "100 Web Technologies" },
+    author: { "@type": "Person", name: author.name, jobTitle: author.role },
     publisher: { "@type": "Organization", name: "100 Web Technologies" },
     mainEntityOfPage: `${SITE_ORIGIN}/blog/${post.slug}`,
     keywords: post.keywords,
@@ -89,8 +92,8 @@ function BlogArticle() {
                 <div className="mt-5 flex items-center gap-4">
                   <div className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-[#263746] text-sm font-black text-white">100</div>
                   <div>
-                    <p className="font-bold text-[#0b87aa]">{post.author_name || "100 Web Technologies Editorial Team"}</p>
-                    <p className="mt-1 text-sm text-slate-500">Technology Editorial Team</p>
+                    <p className="font-bold text-[#0b87aa]">{author.name}</p>
+                    <p className="mt-1 text-sm text-slate-500">{author.role}</p>
                   </div>
                 </div>
                 <div className="mt-8 h-px bg-slate-200" />

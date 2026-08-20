@@ -4,6 +4,7 @@ import { services } from "../lib/services-data";
 import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
 import { FaqAccordion } from "../components/faq-accordion";
+import { listPublishedYoutubeVideos } from "../lib/content.functions";
 import awsLogo from "../assets/partners/aws.svg";
 import azureLogo from "../assets/partners/azure.svg";
 import googleCloudLogo from "../assets/partners/google-cloud.svg";
@@ -28,13 +29,14 @@ import geminiLogo from "../assets/partners/gemini.svg";
 import claudeLogo from "../assets/partners/claude.svg";
 import vercelLogo from "../assets/partners/vercel.svg";
 import andhraTelanganaMap from "../assets/andhra-telangana-map.png";
-import industryHighlights from "../assets/industry-highlights.png";
+import industryHighlights from "../assets/industry-highlights.webp";
 import websiteDevelopmentCard from "../assets/website-development-card.png";
-import mobileAppGradientCard from "../assets/mobile-app-gradient-card.png";
-import digitalMarketingGradientCard from "../assets/digital-marketing-gradient-card.png";
-import seoGradientCard from "../assets/seo-gradient-card.png";
+import mobileAppGradientCard from "../assets/mobile-app-gradient-card.webp";
+import digitalMarketingGradientCard from "../assets/digital-marketing-gradient-card.webp";
+import seoGradientCard from "../assets/seo-gradient-card.webp";
 
 export const Route = createFileRoute("/")({
+  loader: async () => ({ videos: await listPublishedYoutubeVideos() }),
   head: () => ({
     meta: [
       {
@@ -187,7 +189,14 @@ const localSeoFaqs = [
   },
 ];
 
+const youtubeVideoId = (url: string) =>
+  url.match(
+    /(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?v=|embed\/|shorts\/))([^?&/]+)/,
+  )?.[1] ?? "";
+
 function Index() {
+  const { videos } = Route.useLoaderData();
+  const publishedVideos = videos.filter((video) => youtubeVideoId(video.youtube_url));
   const structuredData = {
     "@context": "https://schema.org",
     "@graph": [
@@ -497,39 +506,41 @@ function Index() {
           <SiteHeader />
         </div>
 
-        {/* SHORTS */}
-        <section id="shorts" className="bg-muted/40 py-20">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl">
-              <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-                From our YouTube
-              </h2>
-              <p className="mt-4 text-lg text-muted-foreground">
-                Quick takes on cloud, AI and engineering — straight from our team.
-              </p>
-            </div>
-            <div className="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-4">
-              {["tCDvOQI3pco", "9bZkp7q19f0", "ZbZSe6N_BXs", "3JZ_D3ELwOQ"].map((id) => (
-                <div
-                  key={id}
-                  className="overflow-hidden rounded-2xl border bg-card"
-                  style={{ boxShadow: "var(--shadow-card)" }}
-                >
-                  <div className="relative w-full" style={{ aspectRatio: "9 / 16" }}>
-                    <iframe
-                      src={`https://www.youtube.com/embed/${id}`}
-                      title="YouTube short"
-                      loading="lazy"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      className="absolute inset-0 h-full w-full"
-                    />
+        {/* YouTube videos are shown only after an administrator publishes one. */}
+        {publishedVideos.length > 0 && (
+          <section id="shorts" className="bg-muted/40 py-20">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="max-w-3xl">
+                <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+                  From our YouTube
+                </h2>
+                <p className="mt-4 text-lg text-muted-foreground">
+                  Quick takes on cloud, AI and engineering — straight from our team.
+                </p>
+              </div>
+              <div className="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-4">
+                {publishedVideos.map((video) => (
+                  <div
+                    key={video.id}
+                    className="overflow-hidden rounded-2xl border bg-card"
+                    style={{ boxShadow: "var(--shadow-card)" }}
+                  >
+                    <div className="relative w-full" style={{ aspectRatio: "9 / 16" }}>
+                      <iframe
+                        src={`https://www.youtube-nocookie.com/embed/${youtubeVideoId(video.youtube_url)}?rel=0&modestbranding=1`}
+                        title={video.title}
+                        loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="absolute inset-0 h-full w-full"
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* INDUSTRIES */}
         <section id="industries" className="bg-muted/40 py-10 sm:py-20">
@@ -673,48 +684,6 @@ function Index() {
             </div>
           </section>
         </div>
-
-        {/* VIDEO TESTIMONIALS */}
-        <section id="testimonials" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-wider text-[var(--brand-orange)]">
-              Testimonials
-            </p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-              What our clients say
-            </h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Real stories from leaders who scaled with 100 Web Technologies.
-            </p>
-          </div>
-          <div className="mt-12 grid gap-8 md:grid-cols-2">
-            {[
-              { id: "L_LUpnjgPso", name: "Anita Rao", role: "CTO, FinEdge" },
-              { id: "M7lc1UVf-VE", name: "David Chen", role: "VP Engineering, RetailOne" },
-            ].map((t) => (
-              <div
-                key={t.id}
-                className="overflow-hidden rounded-2xl border bg-card"
-                style={{ boxShadow: "var(--shadow-card)" }}
-              >
-                <div className="relative w-full" style={{ aspectRatio: "16 / 9" }}>
-                  <iframe
-                    src={`https://www.youtube.com/embed/${t.id}`}
-                    title={`Testimonial from ${t.name}`}
-                    loading="lazy"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="absolute inset-0 h-full w-full"
-                  />
-                </div>
-                <div className="p-6">
-                  <div className="font-semibold text-foreground">{t.name}</div>
-                  <div className="text-sm text-muted-foreground">{t.role}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
 
         {/* Local support section removed from the home page */}
         <div className="hidden">

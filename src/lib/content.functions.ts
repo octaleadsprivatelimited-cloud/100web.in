@@ -3,7 +3,11 @@ import { pool } from "./db.server";
 import { services, type Service } from "./services-data";
 import { industries, type Industry } from "./industries-data";
 
-export type ManagedService = Service & { pdf_url?: string | null; is_active?: boolean; hero_video_url?: string | null };
+export type ManagedService = Service & {
+  pdf_url?: string | null;
+  is_active?: boolean;
+  hero_video_url?: string | null;
+};
 export type ManagedIndustry = Industry & {
   description?: string;
   hero_title?: string;
@@ -23,6 +27,14 @@ export type WebsitePortfolioItem = {
   is_featured: boolean;
 };
 
+export type PublicYoutubeVideo = {
+  id: string;
+  title: string;
+  youtube_url: string;
+  description: string | null;
+  thumbnail_url: string | null;
+};
+
 async function overrides(table: "service_pages" | "industry_pages") {
   try {
     const { rows } = await pool.query(`SELECT slug,content,pdf_url,is_active FROM ${table}`);
@@ -37,7 +49,12 @@ export const listPublicServices = createServerFn({ method: "GET" }).handler(asyn
   return services
     .map((item) => {
       const row = rows.get(item.slug);
-      return { ...item, ...(row?.content ?? {}), pdf_url: row?.pdf_url ?? null, is_active: row?.is_active ?? true };
+      return {
+        ...item,
+        ...(row?.content ?? {}),
+        pdf_url: row?.pdf_url ?? null,
+        is_active: row?.is_active ?? true,
+      };
     })
     .filter((item) => item.is_active);
 });
@@ -65,12 +82,32 @@ export const listWebsitePortfolio = createServerFn({ method: "GET" }).handler(as
   }
 });
 
+export const listPublishedYoutubeVideos = createServerFn({ method: "GET" }).handler(async () => {
+  try {
+    const { rows } = await pool.query<PublicYoutubeVideo>(
+      `SELECT id, title, youtube_url, description, thumbnail_url
+       FROM youtube_videos
+       WHERE is_published = true
+       ORDER BY sort_order ASC, created_at DESC`,
+    );
+    return rows;
+  } catch {
+    // The public home page remains available while the media table is being set up.
+    return [] as PublicYoutubeVideo[];
+  }
+});
+
 export const listPublicIndustries = createServerFn({ method: "GET" }).handler(async () => {
   const rows = await overrides("industry_pages");
   return industries
     .map((item) => {
       const row = rows.get(item.slug);
-      return { ...item, ...(row?.content ?? {}), pdf_url: row?.pdf_url ?? null, is_active: row?.is_active ?? true };
+      return {
+        ...item,
+        ...(row?.content ?? {}),
+        pdf_url: row?.pdf_url ?? null,
+        is_active: row?.is_active ?? true,
+      };
     })
     .filter((item) => item.is_active);
 });

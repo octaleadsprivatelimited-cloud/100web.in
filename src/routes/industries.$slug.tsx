@@ -51,10 +51,10 @@ import featuresBg from "../assets/features-bg.webp";
 import aidaBg from "../assets/aida-bg.webp";
 import reasonsBg from "../assets/reasons-bg.webp";
 import packageBg from "../assets/package-bg.webp";
-import fitnessCenterOverviews from "../assets/fitness-center-overviews.png";
-import resultsOutcomes from "../assets/results-outcomes.png";
-import processBackground from "../assets/process-background.png";
-import aidaCardGradient from "../assets/aida-card-gradient.jpg";
+import fitnessCenterOverviews from "../assets/fitness-center-overviews.webp";
+import resultsOutcomes from "../assets/results-outcomes.webp";
+import processBackground from "../assets/process-background.webp";
+import aidaCardGradient from "../assets/aida-card-gradient.webp";
 
 const youtubeId = (url?: string) =>
   url?.match(
