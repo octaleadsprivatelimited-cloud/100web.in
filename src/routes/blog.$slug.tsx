@@ -48,10 +48,11 @@ function BlogArticle() {
     datePublished: post.published_at,
     dateModified: post.updated_at,
     author: { "@type": "Person", name: author.name, jobTitle: author.role },
-    publisher: { "@type": "Organization", name: "100 Web Technologies" },
-    mainEntityOfPage: `${SITE_ORIGIN}/blog/${post.slug}`,
+    publisher: { "@type": "Organization", name: "100 Web Technologies", url: SITE_ORIGIN },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE_ORIGIN}/blog/${post.slug}` },
     keywords: post.keywords,
     image: post.cover_image || `${SITE_ORIGIN}/api/blog-cover/${post.slug}`,
+    inLanguage: "en-IN",
   };
   const breadcrumbSchema = {
     "@context": "https://schema.org",

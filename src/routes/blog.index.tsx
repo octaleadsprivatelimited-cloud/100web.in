@@ -6,6 +6,8 @@ import { SiteFooter } from "@/components/site-footer";
 import { listPublishedBlogPosts, type PublicBlogPost } from "@/lib/blog.functions";
 import { getBlogEditorialAuthor } from "@/lib/blog-authors";
 
+const SITE_ORIGIN = "https://100web.in";
+
 export const Route = createFileRoute("/blog/")({
   validateSearch: (search: Record<string, unknown>) => ({
     query: typeof search.query === "string" ? search.query : "",
@@ -19,7 +21,7 @@ export const Route = createFileRoute("/blog/")({
       { property: "og:description", content: "Actionable technology strategy and implementation guidance for growing businesses." },
       { property: "og:type", content: "website" },
     ],
-    links: [{ rel: "canonical", href: "/blog" }],
+    links: [{ rel: "canonical", href: `${SITE_ORIGIN}/blog` }],
   }),
   component: BlogIndex,
 });
@@ -40,6 +42,26 @@ function BlogIndex() {
   }, [posts, query]);
   const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const visible = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const collectionSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "100 Web Technologies Insights",
+    description: "Practical technology, cloud, AI, development and digital growth guides from 100 Web Technologies.",
+    url: `${SITE_ORIGIN}/blog`,
+    inLanguage: "en-IN",
+    isPartOf: { "@type": "WebSite", name: "100 Web Technologies", url: SITE_ORIGIN },
+    mainEntity: {
+      "@type": "ItemList",
+      itemListOrder: "https://schema.org/ItemListOrderDescending",
+      numberOfItems: posts.length,
+      itemListElement: posts.slice(0, PAGE_SIZE).map((post, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        url: `${SITE_ORIGIN}/blog/${post.slug}`,
+        name: post.title,
+      })),
+    },
+  };
 
   return <div className="min-h-screen bg-background text-foreground">
     <SiteHeader />
@@ -102,6 +124,7 @@ function BlogIndex() {
       </section>
     </main>
     <SiteFooter />
+    <script type="application/ld+json">{JSON.stringify(collectionSchema)}</script>
   </div>;
 }
 

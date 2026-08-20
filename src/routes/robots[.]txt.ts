@@ -11,6 +11,16 @@ Disallow: /admin
 Disallow: /customer
 Disallow: /api
 
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Enables discovery of publicly available pages for ChatGPT Search.
+User-agent: OAI-SearchBot
+Allow: /
+
 Sitemap: ${origin}/sitemap.xml
 `;
 

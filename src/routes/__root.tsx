@@ -126,6 +126,13 @@ function RootComponent() {
       <SitePopupBanner />
       <PageWhatsAppPrompt />
       <Toaster position="top-right" richColors />
+      <script type="application/ld+json">{JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: "100 Web Technologies",
+        url: "https://100web.in",
+        inLanguage: "en-IN",
+      })}</script>
     </QueryClientProvider>
   );
 }
