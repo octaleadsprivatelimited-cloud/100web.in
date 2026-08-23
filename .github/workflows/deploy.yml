@@ -1,0 +1,180 @@
+name: Deploy production
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: production-deployment
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: "20.20.2"
+  PNPM_VERSION: "10.15.1"
+
+jobs:
+  build:
+    name: Build application
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build production bundle
+        run: pnpm build
+
+      - name: Store production bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-build
+          path: dist
+          if-no-files-found: error
+          retention-days: 1
+
+  deploy:
+    name: Deploy to EC2
+    needs: build
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment: production
+
+    env:
+      EC2_HOST: ${{ secrets.EC2_HOST }}
+      EC2_USER: ${{ secrets.EC2_USER }}
+      EC2_PORT: ${{ secrets.EC2_PORT }}
+      EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+      EC2_KNOWN_HOSTS: ${{ secrets.EC2_KNOWN_HOSTS }}
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Download production bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: production-build
+          path: dist
+
+      - name: Validate deployment configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          EC2_PORT="${EC2_PORT:-22}"
+
+          for variable_name in EC2_HOST EC2_USER EC2_SSH_KEY EC2_KNOWN_HOSTS; do
+            if [[ -z "${!variable_name:-}" ]]; then
+              echo "Required GitHub secret ${variable_name} is not configured." >&2
+              exit 1
+            fi
+          done
+
+          if [[ ! "${EC2_USER}" =~ ^[a-z_][a-z0-9_-]*$ ]]; then
+            echo "EC2_USER contains unsupported characters." >&2
+            exit 1
+          fi
+
+          if [[ ! "${EC2_HOST}" =~ ^[a-zA-Z0-9.-]+$ ]]; then
+            echo "EC2_HOST contains unsupported characters." >&2
+            exit 1
+          fi
+
+          if [[ ! "${EC2_PORT}" =~ ^[0-9]+$ ]] || (( EC2_PORT < 1 || EC2_PORT > 65535 )); then
+            echo "EC2_PORT must be a valid TCP port." >&2
+            exit 1
+          fi
+
+          echo "EC2_PORT=${EC2_PORT}" >> "${GITHUB_ENV}"
+
+      - name: Load SSH deploy key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: Pin EC2 host key
+        shell: bash
+        run: |
+          set -euo pipefail
+          install -d -m 700 "${HOME}/.ssh"
+          printf '%s\n' "${EC2_KNOWN_HOSTS}" > "${HOME}/.ssh/known_hosts"
+          chmod 600 "${HOME}/.ssh/known_hosts"
+
+      - name: Create deployment archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive_path="${RUNNER_TEMP}/100web-${GITHUB_SHA}.tar.gz"
+          tar \
+            --exclude='./.git' \
+            --exclude='./.github' \
+            --exclude='./node_modules' \
+            --exclude='./.env*' \
+            -czf "${archive_path}" .
+          echo "DEPLOY_ARCHIVE=${archive_path}" >> "${GITHUB_ENV}"
+
+      - name: Upload release to EC2
+        shell: bash
+        run: |
+          set -euo pipefail
+          remote_archive="/tmp/100web-${GITHUB_SHA}.tar.gz"
+          remote_script="/tmp/100web-deploy-${GITHUB_SHA}.sh"
+
+          scp -P "${EC2_PORT}" \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            "${DEPLOY_ARCHIVE}" \
+            "${EC2_USER}@${EC2_HOST}:${remote_archive}"
+
+          scp -P "${EC2_PORT}" \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            scripts/deploy-production.sh \
+            "${EC2_USER}@${EC2_HOST}:${remote_script}"
+
+      - name: Activate release
+        shell: bash
+        run: |
+          set -euo pipefail
+          remote_archive="/tmp/100web-${GITHUB_SHA}.tar.gz"
+          remote_script="/tmp/100web-deploy-${GITHUB_SHA}.sh"
+
+          ssh -p "${EC2_PORT}" \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            "${EC2_USER}@${EC2_HOST}" \
+            "chmod 700 '${remote_script}' && '${remote_script}' '${remote_archive}' '${GITHUB_SHA}'"
+
+      - name: Verify public website
+        shell: bash
+        run: |
+          curl \
+            --fail \
+            --silent \
+            --show-error \
+            --location \
+            --retry 5 \
+            --retry-all-errors \
+            --retry-delay 3 \
+            --max-time 20 \
+            https://100web.in/ > /dev/null
