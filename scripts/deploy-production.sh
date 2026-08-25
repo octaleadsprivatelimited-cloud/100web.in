@@ -156,14 +156,30 @@ if [[ ! -f dist/server/server.js ]]; then
   exit 1
 fi
 
-preflight_port=3101
-if ss -H -ltn "sport = :${preflight_port}" | grep -q .; then
-  echo "Preflight port ${preflight_port} is already in use." >&2
+preflight_port=""
+for candidate_port in $(seq 3101 3110); do
+  if ! ss -H -ltn "sport = :${candidate_port}" | grep -q .; then
+    preflight_port="${candidate_port}"
+    break
+  fi
+done
+
+if [[ -z "${preflight_port}" ]]; then
+  echo "No preflight port is available in the 3101-3110 range." >&2
   exit 1
 fi
 
+node_arguments=()
+if [[ -f .env ]]; then
+  node_arguments+=("--env-file=.env")
+fi
+
 HOST=127.0.0.1 PORT="${preflight_port}" NODE_ENV=production \
-  pnpm start \
+  node "${node_arguments[@]}" \
+  node_modules/srvx/bin/srvx.mjs \
+  --prod \
+  -s ../client \
+  dist/server/server.js \
   > "${preflight_log}" 2>&1 &
 preflight_pid=$!
 
