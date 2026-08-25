@@ -142,13 +142,11 @@ jobs:
 
           scp -P "${EC2_PORT}" \
             -o BatchMode=yes \
-            -o IdentitiesOnly=yes \
             "${DEPLOY_ARCHIVE}" \
             "${EC2_USER}@${EC2_HOST}:${remote_archive}"
 
           scp -P "${EC2_PORT}" \
             -o BatchMode=yes \
-            -o IdentitiesOnly=yes \
             scripts/deploy-production.sh \
             "${EC2_USER}@${EC2_HOST}:${remote_script}"
 
@@ -161,7 +159,6 @@ jobs:
 
           ssh -p "${EC2_PORT}" \
             -o BatchMode=yes \
-            -o IdentitiesOnly=yes \
             "${EC2_USER}@${EC2_HOST}" \
             "chmod 700 '${remote_script}' && '${remote_script}' '${remote_archive}' '${GITHUB_SHA}'"
 
