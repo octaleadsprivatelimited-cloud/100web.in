@@ -17,9 +17,10 @@ module.exports = {
     {
       name: "100web",
       cwd: appCurrentDir,
-      script: "pnpm",
-      args: ["start"],
-      interpreter: "none",
+      script: "node_modules/srvx/bin/srvx.mjs",
+      args: ["--prod", "-s", "../client", "dist/server/server.js"],
+      interpreter: "node",
+      node_args: fs.existsSync(envFile) ? [`--env-file=${envFile}`] : [],
       instances: 1,
       exec_mode: "fork",
       autorestart: true,
